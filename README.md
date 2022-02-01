@@ -79,3 +79,14 @@ You can see the logging using python code or mosqutto client.
 ![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/151916086-72f83d39-cd85-41e8-a2ba-eee95573c2b6.jpg)
 - for HTTP   
 ![net-logging-http](https://user-images.githubusercontent.com/6020549/151916096-8c11920e-b88b-473b-a86a-a7f04eb6c978.jpg)
+
+
+# API   
+Use one of the following.   
+Subsequent logging will be direct.   
+```
+esp_err_t udp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdout);
+esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdout);
+esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout);
+esp_err_t http_logging_init(char *url, int16_t enableStdout);
+```

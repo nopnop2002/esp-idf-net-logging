@@ -51,7 +51,7 @@ There are the following four methods for specifying the UDP Address.
  I've never used it, so I don't know anything more.
 
 - Unicast address   
- It is possible to cross the router with an address that specifies all octets, such as 192.168.10.41.
+ It is possible to cross the router with an address that specifies all octets, such as 192.168.10.41.   
  Both the sender and receiver must specify the Unicast address.
 
 ## Configuration for TCP Redirect

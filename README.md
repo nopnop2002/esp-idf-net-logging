@@ -7,7 +7,8 @@ The Logging library contains the "esp_log_set_vprintf" function.
 By default, log output goes to UART0.    
 This function can be used to redirect log output to some other destination, such as file or network.    
 
-I made a project that uses 3 UARTs of ESP32, but I was in trouble because there was no logging output destination.   
+I made a project that uses 3 QUARTs of ESP32.   
+But I was in trouble because there was no logging output destination.   
 So I made this.   
 
 

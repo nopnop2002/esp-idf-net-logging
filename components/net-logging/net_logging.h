@@ -13,7 +13,7 @@ typedef struct {
 	char ipv4[20]; // xxx.xxx.xxx.xxx
 	char url[64]; // mqtt://iot.eclipse.org
 	char topic[64];
-  TaskHandle_t taskHandle;
+	TaskHandle_t taskHandle;
 } PARAMETER_t;
 
 // The total number of bytes (not messages) the message buffer will be able to hold at any one time.

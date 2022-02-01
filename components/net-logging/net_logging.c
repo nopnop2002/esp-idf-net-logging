@@ -91,50 +91,50 @@ esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdou
 void mqtt_pub(void *pvParameters);
 
 esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout) {
-  printf("start mqtt logging: url=[%s] topic=[%s]\n", url, topic);
+	printf("start mqtt logging: url=[%s] topic=[%s]\n", url, topic);
 
-  // Create MessageBuffer
-  xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
-  configASSERT( xMessageBufferTrans );
+	// Create MessageBuffer
+	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
+	configASSERT( xMessageBufferTrans );
 
-  // Start UDP task
-  PARAMETER_t param;
-  strcpy(param.url, url);
-  strcpy(param.topic, topic);
-  param.taskHandle = xTaskGetCurrentTaskHandle();
-  xTaskCreate(mqtt_pub, "MQTT", 1024*6, (void *)&param, 2, NULL);
+	// Start UDP task
+	PARAMETER_t param;
+	strcpy(param.url, url);
+	strcpy(param.topic, topic);
+	param.taskHandle = xTaskGetCurrentTaskHandle();
+	xTaskCreate(mqtt_pub, "MQTT", 1024*6, (void *)&param, 2, NULL);
 
-  // Wait for ready to receive notify
-  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
-  //printf("ulTaskNotifyTake\n");
+	// Wait for ready to receive notify
+	ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+	//printf("ulTaskNotifyTake\n");
 
-  // Set function used to output log entries.
-  writeToStdout = enableStdout;
+	// Set function used to output log entries.
+	writeToStdout = enableStdout;
 	esp_log_set_vprintf(logging_vprintf);
-  return ESP_OK;
+	return ESP_OK;
 }
 
 void http_client(void *pvParameters);
 
 esp_err_t http_logging_init(char *url, int16_t enableStdout) {
-  printf("start http logging: url=[%s]\n", url);
+	printf("start http logging: url=[%s]\n", url);
 
-  // Create MessageBuffer
-  xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
-  configASSERT( xMessageBufferTrans );
+	// Create MessageBuffer
+	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
+	configASSERT( xMessageBufferTrans );
 
-  // Start UDP task
-  PARAMETER_t param;
-  strcpy(param.url, url);
-  param.taskHandle = xTaskGetCurrentTaskHandle();
-  xTaskCreate(http_client, "HTTP", 1024*4, (void *)&param, 2, NULL);
+	// Start UDP task
+	PARAMETER_t param;
+	strcpy(param.url, url);
+	param.taskHandle = xTaskGetCurrentTaskHandle();
+	xTaskCreate(http_client, "HTTP", 1024*4, (void *)&param, 2, NULL);
 
-  // Wait for ready to receive notify
-  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
-  //printf("ulTaskNotifyTake\n");
+	// Wait for ready to receive notify
+	ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+	//printf("ulTaskNotifyTake\n");
 
-  // Set function used to output log entries.
-  writeToStdout = enableStdout;
+	// Set function used to output log entries.
+	writeToStdout = enableStdout;
 	esp_log_set_vprintf(logging_vprintf);
-  return ESP_OK;
+	return ESP_OK;
 }

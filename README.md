@@ -75,6 +75,7 @@ You can see the logging using python code or mosqutto client.
  The wifi logging is output in two parts.   
  First time:W (7060) wifi:   
  Second time:Characters after that   
+ In MQTT, it is displayed in two parts.   
 ![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/151916086-72f83d39-cd85-41e8-a2ba-eee95573c2b6.jpg)
 - for HTTP   
 ![net-logging-http](https://user-images.githubusercontent.com/6020549/151916096-8c11920e-b88b-473b-a86a-a7f04eb6c978.jpg)

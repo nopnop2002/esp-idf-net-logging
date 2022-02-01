@@ -38,7 +38,7 @@ idf.py flash
 
 There are the following four methods for specifying the UDP Address.
 - Limited broadcast address   
- The address represented by 255.255.255.255, or <broadcast>, cannot cross the router.   
+ The address represented by 255.255.255.255, or &gtbroadcast&lt, cannot cross the router.   
  Both the sender and receiver must specify a Limited broadcast address.   
 
 - Directed broadcast address   

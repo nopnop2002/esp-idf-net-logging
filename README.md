@@ -83,7 +83,7 @@ You can see the logging using python code or mosqutto client.
 
 # API   
 Use one of the following.   
-Subsequent logging will be direct.   
+Subsequent logging will be redirected.   
 ```
 esp_err_t udp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdout);
 esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdout);

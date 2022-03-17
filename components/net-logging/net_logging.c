@@ -71,7 +71,7 @@ esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdou
 	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
 	configASSERT( xMessageBufferTrans );
 
-	// Start UDP task
+	// Start TCP task
 	PARAMETER_t param;
 	param.port = port;
 	strcpy(param.ipv4, ipaddr);
@@ -97,7 +97,7 @@ esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout) {
 	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
 	configASSERT( xMessageBufferTrans );
 
-	// Start UDP task
+	// Start MQTT task
 	PARAMETER_t param;
 	strcpy(param.url, url);
 	strcpy(param.topic, topic);
@@ -123,7 +123,7 @@ esp_err_t http_logging_init(char *url, int16_t enableStdout) {
 	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
 	configASSERT( xMessageBufferTrans );
 
-	// Start UDP task
+	// Start HTTP task
 	PARAMETER_t param;
 	strcpy(param.url, url);
 	param.taskHandle = xTaskGetCurrentTaskHandle();

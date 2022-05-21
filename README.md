@@ -63,8 +63,9 @@ There are the following four methods for specifying the UDP Address.
 
 
 ## Configuration for HTTP Redirect
-![config-http](https://user-images.githubusercontent.com/6020549/151916036-7af01f41-7161-4e09-9b19-beb5676b0e90.jpg)
+![config-http](https://user-images.githubusercontent.com/6020549/169649100-2a3bda0d-ae23-4f6e-b68a-afac472b9a02.jpg)
 
+You can use mDNS host name.   
 
 # View logging   
 You can see the logging using python code or mosqutto client.   

@@ -92,7 +92,7 @@ menu "NET Logging"
   config LOG_HTTP_SERVER_URL
 		depends on ENABLE_HTTP_LOG
     string "URL of the http server to connect to"
-    default "http://myhttpserver:8000"
+    default "http://myhttpserver.local:8000"
     help
       URL of the http server to connect to.
 

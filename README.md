@@ -80,6 +80,8 @@ You can see the logging using python code or mosqutto client.
  First time:W (7060) wifi:   
  Second time:Characters after that   
  In MQTT and HTTP, it is displayed separately in two.   
+__If you use broker.emqx.io, continuous Logging will drop.__   
+
 ![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/182273560-fc1931bf-71f7-4751-a57d-680312a93391.jpg)
 
 - for HTTP   

@@ -71,16 +71,16 @@ void mqtt_pub(void *pvParameters)
 	mqtt_status_event_group = xEventGroupCreate();
 	configASSERT( mqtt_status_event_group );
 
-#if 0
 	esp_mqtt_client_config_t mqtt_cfg = {
 		.uri = param.url,
 		.event_handle = mqtt_event_handler,
 	};
-#endif
+#if 0
 	esp_mqtt_client_config_t mqtt_cfg = {
 		.uri = "mqtt://192.168.10.40:1883",
 		.event_handle = mqtt_event_handler,
 	};
+#endif
 
 	// Connect broker
 	esp_mqtt_client_handle_t mqtt_client = esp_mqtt_client_init(&mqtt_cfg);

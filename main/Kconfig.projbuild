@@ -78,7 +78,7 @@ menu "NET Logging"
 	config LOG_MQTT_SERVER_URL
 		depends on ENABLE_MQTT_LOG
 		string "URL of the mqtt server to connect to"
-		default "mqtt://iot.eclipse.org:1883"
+		default "mqtt://broker.emqx.io:1883"
 		help
 			URL of the mqtt server to connect to
 

@@ -15,7 +15,8 @@
 #include "esp_chip_info.h"
 
 #include "lwip/init.h"
-#include "esp_spi_flash.h"
+//#include "esp_spi_flash.h" ESP-IDF V4
+#include "esp_flash.h" // ESP-IDF V5
 
 #include "net_logging.h"
 
@@ -176,7 +177,13 @@ void app_main()
 		(chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
 		(chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
 	ESP_LOGI(TAG, "silicon revision %d", chip_info.revision);
+#if 0
 	ESP_LOGI(TAG, "%dMB %s flash", spi_flash_get_chip_size() / (1024 * 1024),
 		(chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+#endif
+	uint32_t size_flash_chip;
+	esp_flash_get_size(NULL, &size_flash_chip);
+	ESP_LOGI(TAG, "%dMB %s flash", size_flash_chip / (1024 * 1024),
+			(chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 }
 

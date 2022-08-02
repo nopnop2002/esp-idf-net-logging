@@ -32,6 +32,10 @@ class class1(BaseHTTPRequestHandler):
 ip = '0.0.0.0'
 port = 8000
 
+print("+===========================+")
+print("| ESP32 HTTP Logging Server |")
+print("+===========================+")
+print("")
 server = HTTPServer((ip, port), class1)
 
 server.serve_forever()

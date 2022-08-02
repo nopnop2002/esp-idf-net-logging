@@ -25,7 +25,7 @@ I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logg
 ```Shell
 git clone https://github.com/nopnop2002/esp-idf-net-logging
 cd esp-idf-net-logging
-idf.py set-target {esp32/esp32s2/esp32c3}
+idf.py set-target {esp32/esp32s2/esp32s3/esp32c3}
 idf.py menuconfig
 idf.py flash
 ```
@@ -59,7 +59,7 @@ There are the following four methods for specifying the UDP Address.
 
 
 ## Configuration for MQTT Redirect
-![config-mqtt](https://user-images.githubusercontent.com/6020549/151916002-84523ad7-e591-4a55-aad6-997dbda3bf71.jpg)
+![config-mqtt](https://user-images.githubusercontent.com/6020549/182273356-08b4e983-b552-4b1a-8a30-a9708e8fb114.jpg)
 
 
 ## Configuration for HTTP Redirect
@@ -70,17 +70,20 @@ You can use mDNS host name.
 # View logging   
 You can see the logging using python code or mosqutto client.   
 - for UDP   
-![net-logging-udp](https://user-images.githubusercontent.com/6020549/151916070-184e5ad7-dc70-4536-bde0-b20e99439f09.jpg)
+![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)
+
 - for TCP   
-![net-logging-tcp](https://user-images.githubusercontent.com/6020549/151916076-1ce6167f-a46a-42fd-a6e5-eab9bde6188b.jpg)
+![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)
+
 - for MQTT   
  The wifi logging is output in two parts.   
  First time:W (7060) wifi:   
  Second time:Characters after that   
  In MQTT and HTTP, it is displayed separately in two.   
-![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/151916086-72f83d39-cd85-41e8-a2ba-eee95573c2b6.jpg)
+![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/182273560-fc1931bf-71f7-4751-a57d-680312a93391.jpg)
+
 - for HTTP   
-![net-logging-http](https://user-images.githubusercontent.com/6020549/151916096-8c11920e-b88b-473b-a86a-a7f04eb6c978.jpg)
+![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
 
 
 # API   

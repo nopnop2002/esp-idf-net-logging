@@ -67,6 +67,9 @@ There are the following four methods for specifying the UDP Address.
 
 You can use mDNS host name.   
 
+## Disable STDOUT
+![config-stdout](https://user-images.githubusercontent.com/6020549/197962599-ecaa9b41-b45e-4afc-a94f-9fb9c9810e08.jpg)
+
 # View logging   
 You can see the logging using python code or mosqutto client.   
 - for UDP   

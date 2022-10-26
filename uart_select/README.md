@@ -40,5 +40,5 @@ idf.py flash
 - Enter any key in the terminal application.   
 
 - Logging is redirected.   
- ![uart_select](https://user-images.githubusercontent.com/6020549/197926684-2aa46d22-3096-44a1-8139-dc34cd55d831.jpg)
+ ![uart_select](https://user-images.githubusercontent.com/6020549/197926926-5198c6c6-4a48-43ce-8a1f-3bf2a8caa062.jpg)
 

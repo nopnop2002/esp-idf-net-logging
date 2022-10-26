@@ -67,7 +67,7 @@ There are the following four methods for specifying the UDP Address.
 
 You can use mDNS host name.   
 
-## Disable STDOUT
+## Disable Logging to STDOUT
 ![config-stdout](https://user-images.githubusercontent.com/6020549/197962599-ecaa9b41-b45e-4afc-a94f-9fb9c9810e08.jpg)
 
 # View logging   

@@ -13,6 +13,7 @@
 #include "esp_system.h"
 #include "esp_log.h"
 #include "lwip/sockets.h"
+#include "netdb.h" // gethostbyname
 
 #include "net_logging.h"
 
@@ -35,6 +36,21 @@ void tcp_client(void *pvParameters)
 	dest_addr.sin_port = htons(param.port);
 	addr_family = AF_INET;
 	ip_protocol = IPPROTO_IP;
+
+	printf("dest_addr.sin_addr.s_addr=%x\n", dest_addr.sin_addr.s_addr);
+	if (dest_addr.sin_addr.s_addr == 0xffffffff) {
+		struct hostent *hp;
+		hp = gethostbyname(param.ipv4);
+		if (hp == NULL) {
+			printf("FTP Client Error: Connect, gethostbyname\n");
+			vTaskDelete(NULL);
+		}
+		struct ip4_addr *ip4_addr;
+		ip4_addr = (struct ip4_addr *)hp->h_addr;
+		dest_addr.sin_addr.s_addr = ip4_addr->addr;
+		printf("dest_addr.sin_addr.s_addr=%x\n", dest_addr.sin_addr.s_addr);
+	}
+	
 
 	int sock =	socket(addr_family, SOCK_STREAM, ip_protocol);
 	if (sock < 0) {

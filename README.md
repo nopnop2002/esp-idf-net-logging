@@ -57,6 +57,7 @@ There are the following four methods for specifying the UDP Address.
 ## Configuration for TCP Redirect
 ![config-tcp](https://user-images.githubusercontent.com/6020549/151915971-191f4e66-d1b4-41c0-a2d9-1822c7383bb9.jpg)
 
+You can use mDNS host name for your tcp server.
 
 ## Configuration for MQTT Redirect
 ![config-mqtt](https://user-images.githubusercontent.com/6020549/182273356-08b4e983-b552-4b1a-8a30-a9708e8fb114.jpg)

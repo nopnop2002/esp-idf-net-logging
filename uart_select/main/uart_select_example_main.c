@@ -19,6 +19,7 @@
 #include "esp_vfs.h"
 #include "esp_vfs_dev.h"
 #include "driver/uart.h"
+#include "driver/gpio.h"
 
 #include "esp_system.h"
 #include "esp_wifi.h"
@@ -29,6 +30,9 @@
 
 
 static const char* TAG = "MAIN";
+
+#define TXD_PIN (GPIO_NUM_4)
+#define RXD_PIN (GPIO_NUM_5)
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -144,6 +148,7 @@ static void uart_select_task(void *arg)
 	};
 	uart_driver_install(UART_NUM_0, 2*1024, 0, 0, NULL, 0);
 	uart_param_config(UART_NUM_0, &uart_config);
+	uart_set_pin(UART_NUM_0, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
 	while (1) {
 		int fd;

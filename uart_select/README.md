@@ -20,8 +20,8 @@ idf.py flash
 
 |ESP32||Converter|
 |:-:|:-:|:-:|
-|GPIO1|--|RXD|
-|GPIO3|--|TXD|
+|GPIO4|--|RXD|
+|GPIO5|--|TXD|
 |GND|--|GND|
 
 - Connect the UART-TTL converter to the HOST.   

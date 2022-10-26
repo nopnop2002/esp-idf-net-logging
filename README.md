@@ -24,7 +24,7 @@ I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logg
 # Installation
 ```Shell
 git clone https://github.com/nopnop2002/esp-idf-net-logging
-cd esp-idf-net-logging
+cd esp-idf-net-logging/basic
 idf.py set-target {esp32/esp32s2/esp32s3/esp32c3}
 idf.py menuconfig
 idf.py flash

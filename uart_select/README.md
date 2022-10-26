@@ -32,8 +32,8 @@ idf.py flash
 
 - Flash firmware.   
 
-- Open terminal application like TeraTerm.
- Open Serial Port. Baudrate is 115200bps.   
+- Open terminal application like TeraTerm.   
+ Open the serial port at 115200bps.   
 
 - Enter any key in the terminal application.   
 

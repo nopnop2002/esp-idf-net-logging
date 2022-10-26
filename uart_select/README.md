@@ -34,7 +34,7 @@ idf.py flash
 
 - Start logging server like udp-server.py.   
 
-- Open terminal application like TeraTerm.   
+- Start terminal application like TeraTerm.   
  Open the serial port at 115200bps.   
 
 - Enter any key in the terminal application.   

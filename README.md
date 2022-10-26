@@ -65,7 +65,7 @@ There are the following four methods for specifying the UDP Address.
 ## Configuration for HTTP Redirect
 ![config-http](https://user-images.githubusercontent.com/6020549/169649100-2a3bda0d-ae23-4f6e-b68a-afac472b9a02.jpg)
 
-You can use mDNS host name.   
+You can use mDNS host name for your http server.
 
 ## Disable Logging to STDOUT
 ![config-stdout](https://user-images.githubusercontent.com/6020549/197962599-ecaa9b41-b45e-4afc-a94f-9fb9c9810e08.jpg)

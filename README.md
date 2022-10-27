@@ -79,7 +79,9 @@ You can use netcat as server.
 ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)
 
 - for TCP   
-![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)
+![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)   
+You can use netcat as server.   
+![netcat-tcp](https://user-images.githubusercontent.com/6020549/198230565-4fece92e-349f-4555-aba6-2196d3b6c040.jpg)
 
 - for MQTT   
  The wifi logging is output in two parts.   

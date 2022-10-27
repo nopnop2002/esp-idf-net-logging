@@ -74,7 +74,7 @@ You can use mDNS host name for your http server.
 # View logging   
 You can see the logging using python code or mosqutto client.   
 - for UDP   
-![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)
+![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
 You can use netcat as server.   
 ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)
 

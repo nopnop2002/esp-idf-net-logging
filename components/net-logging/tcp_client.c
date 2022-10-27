@@ -26,7 +26,9 @@ void tcp_client(void *pvParameters)
 	memcpy((char *)&param, task_parameter, sizeof(PARAMETER_t));
 	printf("Start:param.port=%d param.ipv4=[%s]\n", param.port, param.ipv4);
 
+#if 0
 	char rx_buffer[128];
+#endif
 	int addr_family = 0;
 	int ip_protocol = 0;
 
@@ -52,7 +54,7 @@ void tcp_client(void *pvParameters)
 	}
 	
 
-	int sock =	socket(addr_family, SOCK_STREAM, ip_protocol);
+	int sock = socket(addr_family, SOCK_STREAM, ip_protocol);
 	if (sock < 0) {
 		//ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
 		vTaskDelete(NULL);
@@ -79,10 +81,12 @@ void tcp_client(void *pvParameters)
 			int ret = send(sock, buffer, received, 0);
 			LWIP_ASSERT("ret == received", ret == received);
 
+#if 0
 			int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
 			LWIP_ASSERT("len > 0", len > 0);
 			//printf("Received %d bytes from %s:\n", len, param.ipv4);
 			//printf("[%.*s]\n", len, rx_buffer);
+#endif
 		} else {
 			//printf("xMessageBufferReceive fail\n");
 			break;

@@ -29,7 +29,7 @@ def main():
 			#print("[*] Received Data : {}".format(data))
 			print(data, end='')
 	
-		client.send(b"ACK!!")
+		#client.send(b"ACK!!")
 
 	client.close()
 

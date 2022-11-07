@@ -8,6 +8,7 @@
 */
 
 #include <stdio.h>
+#include <inttypes.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
@@ -17,6 +18,7 @@
 #include "freertos/message_buffer.h"
 #include "esp_log.h"
 #include "esp_event.h"
+#include "esp_mac.h" // esp_base_mac_addr_get
 #include "mqtt_client.h"
 
 #include "net_logging.h"
@@ -26,9 +28,15 @@ EventGroupHandle_t mqtt_status_event_group;
 
 extern MessageBufferHandle_t xMessageBufferTrans;
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+#else
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
+#endif
 {
-	// your_context_t *context = event->context;
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+	esp_mqtt_event_handle_t event = event_data;
+#endif
 	switch (event->event_id) {
 		case MQTT_EVENT_CONNECTED:
 			//ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
@@ -57,7 +65,9 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 			//ESP_LOGI(TAG, "Other event id:%d", event->event_id);
 			break;
 	}
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5, 0, 0)
 	return ESP_OK;
+#endif
 }
 
 void mqtt_pub(void *pvParameters)
@@ -70,22 +80,36 @@ void mqtt_pub(void *pvParameters)
 	// Create Event Group
 	mqtt_status_event_group = xEventGroupCreate();
 	configASSERT( mqtt_status_event_group );
+	
+	// Set client id from mac
+	uint8_t mac[8];
+	ESP_ERROR_CHECK(esp_base_mac_addr_get(mac));
+	char client_id[64];
+	sprintf(client_id, "pub-%02x%02x%02x%02x%02x%02x", mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
+	//printf("client_id=[%s]\n", client_id);
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+	esp_mqtt_client_config_t mqtt_cfg = {
+		.broker.address.uri = param.url,
+		.credentials.client_id = client_id
+	};
+#else
 	esp_mqtt_client_config_t mqtt_cfg = {
 		.uri = param.url,
 		.event_handle = mqtt_event_handler,
-	};
-#if 0
-	esp_mqtt_client_config_t mqtt_cfg = {
-		.uri = "mqtt://192.168.10.40:1883",
-		.event_handle = mqtt_event_handler,
+		.client_id = client_id
 	};
 #endif
 
 	// Connect broker
 	esp_mqtt_client_handle_t mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
-	xEventGroupClearBits(mqtt_status_event_group, MQTT_CONNECTED_BIT);
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+	esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
+#endif
+
 	esp_mqtt_client_start(mqtt_client);
+	xEventGroupClearBits(mqtt_status_event_group, MQTT_CONNECTED_BIT);
 
 	// Wait for connection
 	xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, portMAX_DELAY);

@@ -3,6 +3,8 @@
  * This sample code is in the public domain.
  */
 
+#include <stdio.h>
+#include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -29,7 +31,7 @@ static EventGroupHandle_t s_wifi_event_group;
  * - we are connected to the AP with an IP
  * - we failed to connect after the maximum amount of retries */
 #define WIFI_CONNECTED_BIT BIT0
-#define WIFI_FAIL_BIT			 BIT1
+#define WIFI_FAIL_BIT BIT1
 
 static int s_retry_num = 0;
 
@@ -183,7 +185,7 @@ void app_main()
 #endif
 	uint32_t size_flash_chip;
 	esp_flash_get_size(NULL, &size_flash_chip);
-	ESP_LOGI(TAG, "%dMB %s flash", size_flash_chip / (1024 * 1024),
+	ESP_LOGI(TAG, "%"PRIu32"MB %s flash", size_flash_chip / (1024 * 1024),
 			(chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 }
 

@@ -20,6 +20,9 @@ The following protocols are available for this project.
 
 I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logging).
 
+# Software requirements
+esp-idf v4.4/v5.0.   
+
 
 # Installation
 ```Shell

@@ -10,7 +10,6 @@ Redirecting esp-idf logging to the network allows UART0 to communicate with peri
 ```Shell
 git clone https://github.com/nopnop2002/esp-idf-net-logging
 cd esp-idf-net-logging/uart_select
-idf.py set-target {esp32/esp32s2/esp32s3/esp32c3}
 idf.py menuconfig
 idf.py flash
 ```

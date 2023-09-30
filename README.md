@@ -3,7 +3,7 @@ Redirect esp-idf logging to the network.
 
 
 esp-idf has a Logging library.   
-The Logging library contains the "esp_log_set_vprintf" function.   
+The Logging library contains the ```esp_log_set_vprintf``` function.   
 By default, log output goes to UART0.    
 This function can be used to redirect log output to some other destination, such as file or network.    
 

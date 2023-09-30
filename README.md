@@ -77,12 +77,12 @@ You can use mDNS host name for your http server.
 You can see the logging using python code or mosqutto client.   
 - for UDP   
 ![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
-You can use netcat as server.   
+You can use ```netcat``` as server.   
 ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)
 
 - for TCP   
 ![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)   
-You can use netcat as server.   
+You can use ```netcat``` as server.   
 ![netcat-tcp](https://user-images.githubusercontent.com/6020549/198230565-4fece92e-349f-4555-aba6-2196d3b6c040.jpg)
 
 - for MQTT   

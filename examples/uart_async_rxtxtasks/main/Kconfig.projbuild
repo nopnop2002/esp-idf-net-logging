@@ -1,4 +1,4 @@
-menu "NET Logging"
+menu "Example Config"
 
 	config WRITE_TO_STDOUT
 		bool "Enable write Logging to STDOUT"
@@ -89,16 +89,11 @@ menu "NET Logging"
 		help
 			Topic of publish
 
-	config LOG_HTTP_SERVER_URL
+  config LOG_HTTP_SERVER_URL
 		depends on ENABLE_HTTP_LOG
-		string "URL of the http server to connect to"
-		default "http://myhttpserver.local:8000"
-		help
-			URL of the http server to connect to.
+    string "URL of the http server to connect to"
+    default "http://myhttpserver.local:8000"
+    help
+      URL of the http server to connect to.
 
-	config USE_RINGBUFFER
-		bool "Use xRingBuffer as IPC"
-		default n
-		help
-			Use xRingBuffer as IPC.
 endmenu

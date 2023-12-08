@@ -1,22 +1,33 @@
-/* UDP Client
+/*
+	UDP Client
 
-	 This example code is in the Public Domain (or CC0 licensed, at your option.)
+	This example code is in the Public Domain (or CC0 licensed, at your option.)
 
-	 Unless required by applicable law or agreed to in writing, this
-	 software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-	 CONDITIONS OF ANY KIND, either express or implied.
+	Unless required by applicable law or agreed to in writing, this
+	software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied.
 */
+
+#include <stdio.h>
+#include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/timers.h"
+#if CONFIG_USE_RINGBUFFER
+#include "freertos/ringbuf.h"
+#else
 #include "freertos/message_buffer.h"
+#endif
 #include "esp_system.h"
 #include "esp_log.h"
 #include "lwip/sockets.h"
 
 #include "net_logging.h"
 
+#if CONFIG_USE_RINGBUFFER
+extern RingbufHandle_t xRingBufferTrans;
+#else
 extern MessageBufferHandle_t xMessageBufferTrans;
+#endif
 
 void udp_dump(char *id, char *data, int len)
 {
@@ -51,15 +62,31 @@ void udp_client(void *pvParameters) {
 	LWIP_ASSERT("fd >= 0", fd >= 0);
 
 	// Send ready to receive notify
-	char buffer[xItemSize];
 	xTaskNotifyGive(param.taskHandle);
 
 	while(1) {
+#if CONFIG_USE_RINGBUFFER
+		size_t received;
+		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+		//printf("xRingBufferReceive received=%d\n", received);
+#else
+		char buffer[xItemSize];
 		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
+#endif
 		if (received > 0) {
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			//udp_dump("buffer", buffer, received);
+			ret = lwip_sendto(fd, buffer, received, 0, (struct sockaddr *)&addr, sizeof(addr));
+			LWIP_ASSERT("ret == received", ret == received);
+#if CONFIG_USE_RINGBUFFER
+			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+#endif
+		} else {
+			printf("xMessageBufferReceive fail\n");
+			break;
+		}
+	} // end while
 
 /*
 buffer included escape code
@@ -84,8 +111,6 @@ ESC [ ColorCode m
 Finished coloring:
 ESC [ 0 m
 
-
-
 buffer NOT included escape code
 [buffer]
 3c 62 61 2d 61 64 64 3e 69 64
@@ -96,14 +121,6 @@ buffer NOT included escape code
 73 6e 3a 34 2c 20 77 69 6e 53
 69 7a 65 3a 36 34
 */
-
-			ret = lwip_sendto(fd, buffer, received, 0, (struct sockaddr *)&addr, sizeof(addr));
-			LWIP_ASSERT("ret == received", ret == received);
-		} else {
-			printf("xMessageBufferReceive fail\n");
-			break;
-		}
-	} // end while
 
 	// Close socket
 	ret = lwip_close(fd);

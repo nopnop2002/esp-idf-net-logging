@@ -36,7 +36,7 @@ idf.py flash
 ![config-top](https://user-images.githubusercontent.com/6020549/151915919-d6f19861-8d48-4630-aeed-aab819929dc6.jpg)
 
 ## Configuration for UDP Redirect
-![config-udp](https://user-images.githubusercontent.com/6020549/151915950-87d97cee-1082-4a37-96c5-77958bee4051.jpg)
+![config-udp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/5a9914ff-53a7-44f9-9ebf-08641c5123da)
 
 There are the following four methods for specifying the UDP Address.
 - Limited broadcast address   
@@ -57,21 +57,30 @@ There are the following four methods for specifying the UDP Address.
  Both the sender and receiver must specify the Unicast address.
 
 ## Configuration for TCP Redirect
-![config-tcp](https://user-images.githubusercontent.com/6020549/151915971-191f4e66-d1b4-41c0-a2d9-1822c7383bb9.jpg)
+![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
 
 You can use mDNS host name for your tcp server.
 
 ## Configuration for MQTT Redirect
-![config-mqtt](https://user-images.githubusercontent.com/6020549/182273356-08b4e983-b552-4b1a-8a30-a9708e8fb114.jpg)
+![config-mqtt](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/d27be5d2-6a1a-4c5f-86c9-6cdf4394d137)
 
 
 ## Configuration for HTTP Redirect
-![config-http](https://user-images.githubusercontent.com/6020549/169649100-2a3bda0d-ae23-4f6e-b68a-afac472b9a02.jpg)
+![config-http](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/ea09b7e6-a95a-4351-8fb8-d6d9a9c398cb)
 
 You can use mDNS host name for your http server.
 
 ## Disable Logging to STDOUT
-![config-stdout](https://user-images.githubusercontent.com/6020549/197962599-ecaa9b41-b45e-4afc-a94f-9fb9c9810e08.jpg)
+![config-stdout](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/c8516a79-4c55-414f-b0b6-41eff0006e72)
+
+## Use xRingBuffer as IPC
+![config-xRingBuffer](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/53aef0cc-0e44-4f19-a10c-d55bc78ef091)
+
+Both xMessageBuffer and xRingBuffer are interprocess communication components provided by ESP-IDF.   
+Several drivers provided by ESP-IDF use xRingBuffer.   
+This project uses xMessageBuffer by default.   
+If you use this project at the same time as a driver that uses xRingBuffer, using xRingBuffer uses less memory.   
+Memory usage status can be checked with ```idf.py size-files```.   
 
 # View logging   
 You can see the logging using python code or mosqutto client.   

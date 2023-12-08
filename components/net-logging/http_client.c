@@ -1,16 +1,22 @@
-/* HTTP POST
+/*
+	HTTP POST
 
-	 This example code is in the Public Domain (or CC0 licensed, at your option.)
+	This example code is in the Public Domain (or CC0 licensed, at your option.)
 
-	 Unless required by applicable law or agreed to in writing, this
-	 software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-	 CONDITIONS OF ANY KIND, either express or implied.
+	Unless required by applicable law or agreed to in writing, this
+	software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied.
 */
 
+#include <stdio.h>
+#include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#if CONFIG_USE_RINGBUFFER
+#include "freertos/ringbuf.h"
+#else
 #include "freertos/message_buffer.h"
+#endif
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_tls.h"
@@ -18,7 +24,11 @@
 
 #include "net_logging.h"
 
+#if CONFIG_USE_RINGBUFFER
+extern RingbufHandle_t xRingBufferTrans;
+#else
 extern MessageBufferHandle_t xMessageBufferTrans;
+#endif
 
 esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 {
@@ -164,12 +174,18 @@ void http_client(void *pvParameters)
 	//printf("Start:param.url=[%s]\n", param.url);
 
 	// Send ready to receive notify
-	char buffer[xItemSize];
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
+#if CONFIG_USE_RINGBUFFER
+        size_t received;
+        char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+        //printf("xRingBufferReceive received=%d\n", received);
+#else
+		char buffer[xItemSize];
 		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
+#endif
 		if (received > 0) {
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			// Remove trailing LF
@@ -177,6 +193,9 @@ void http_client(void *pvParameters)
 			if (received) {
 				http_post_with_url(param.url, buffer, received);
 			}
+#if CONFIG_USE_RINGBUFFER
+            vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+#endif
 		} else {
 			printf("xMessageBufferReceive fail\n");
 			break;

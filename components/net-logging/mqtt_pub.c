@@ -1,21 +1,24 @@
-/* MQTT (over TCP) Example
+/*
+	MQTT over TCP
 
-	 This example code is in the Public Domain (or CC0 licensed, at your option.)
+	This example code is in the Public Domain (or CC0 licensed, at your option.)
 
-	 Unless required by applicable law or agreed to in writing, this
-	 software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-	 CONDITIONS OF ANY KIND, either express or implied.
+	Unless required by applicable law or agreed to in writing, this
+	software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied.
 */
 
 #include <stdio.h>
 #include <inttypes.h>
 #include <stdint.h>
-#include <stddef.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/event_groups.h"
+#if CONFIG_USE_RINGBUFFER
+#include "freertos/ringbuf.h"
+#else
 #include "freertos/message_buffer.h"
+#endif
 #include "esp_log.h"
 #include "esp_event.h"
 #include "esp_mac.h" // esp_base_mac_addr_get
@@ -26,7 +29,11 @@
 EventGroupHandle_t mqtt_status_event_group;
 #define MQTT_CONNECTED_BIT BIT2
 
+#if CONFIG_USE_RINGBUFFER
+extern RingbufHandle_t xRingBufferTrans;
+#else
 extern MessageBufferHandle_t xMessageBufferTrans;
+#endif
 
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
@@ -116,12 +123,18 @@ void mqtt_pub(void *pvParameters)
 	//printf("Connected to MQTT Broker\n");
 
 	// Send ready to receive notify
-	char buffer[xItemSize];
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
+#if CONFIG_USE_RINGBUFFER
+		size_t received;
+		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+		//printf("xRingBufferReceive received=%d\n", received);
+#else
+		char buffer[xItemSize];
 		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
+#endif
 		if (received > 0) {
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			EventBits_t EventBits = xEventGroupGetBits(mqtt_status_event_group);
@@ -134,8 +147,11 @@ void mqtt_pub(void *pvParameters)
 					//printf("sent publish successful\n");
 				}
 			} else {
-				printf("Disconnect to MQTT Broker. Skip to send\n");
+				printf("Connection to MQTT broker is broken. Skip to send\n");
 			}
+#if CONFIG_USE_RINGBUFFER
+			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+#endif
 		} else {
 			printf("xMessageBufferReceive fail\n");
 			break;

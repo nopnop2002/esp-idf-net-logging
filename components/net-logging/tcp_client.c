@@ -1,18 +1,22 @@
-/* TCP Client
+/*
+	TCP Client
 
-	 This example code is in the Public Domain (or CC0 licensed, at your option.)
+	This example code is in the Public Domain (or CC0 licensed, at your option.)
 
-	 Unless required by applicable law or agreed to in writing, this
-	 software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-	 CONDITIONS OF ANY KIND, either express or implied.
+	Unless required by applicable law or agreed to in writing, this
+	software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied.
 */
 
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#if CONFIG_USE_RINGBUFFER
+#include "freertos/ringbuf.h"
+#else
 #include "freertos/message_buffer.h"
+#endif
 #include "esp_system.h"
 #include "esp_log.h"
 #include "lwip/sockets.h"
@@ -20,7 +24,11 @@
 
 #include "net_logging.h"
 
+#if CONFIG_USE_RINGBUFFER
+extern RingbufHandle_t xRingBufferTrans;
+#else
 extern MessageBufferHandle_t xMessageBufferTrans;
+#endif
 
 void tcp_client(void *pvParameters)
 {
@@ -29,9 +37,6 @@ void tcp_client(void *pvParameters)
 	memcpy((char *)&param, task_parameter, sizeof(PARAMETER_t));
 	printf("Start:param.port=%d param.ipv4=[%s]\n", param.port, param.ipv4);
 
-#if 0
-	char rx_buffer[128];
-#endif
 	int addr_family = 0;
 	int ip_protocol = 0;
 
@@ -73,22 +78,24 @@ void tcp_client(void *pvParameters)
 	}
 
 	// Send ready to receive notify
-	char buffer[xItemSize];
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
+#if CONFIG_USE_RINGBUFFER
+        size_t received;
+        char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+        //printf("xRingBufferReceive received=%d\n", received);
+#else
+		char buffer[xItemSize];
 		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
+#endif
 		if (received > 0) {
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			int ret = send(sock, buffer, received, 0);
 			LWIP_ASSERT("ret == received", ret == received);
-
-#if 0
-			int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-			LWIP_ASSERT("len > 0", len > 0);
-			//printf("Received %d bytes from %s:\n", len, param.ipv4);
-			//printf("[%.*s]\n", len, rx_buffer);
+#if CONFIG_USE_RINGBUFFER
+            vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
 #endif
 		} else {
 			//printf("xMessageBufferReceive fail\n");

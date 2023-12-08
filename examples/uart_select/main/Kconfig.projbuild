@@ -1,4 +1,4 @@
-menu "Example Config"
+menu "Example Project Config"
 
 	config WRITE_TO_STDOUT
 		bool "Enable write Logging to STDOUT"

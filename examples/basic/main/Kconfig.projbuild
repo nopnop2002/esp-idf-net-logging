@@ -1,4 +1,4 @@
-menu "Example Config"
+menu "Example Project Config"
 
 	config WRITE_TO_STDOUT
 		bool "Enable write Logging to STDOUT"
@@ -96,9 +96,4 @@ menu "Example Config"
 		help
 			URL of the http server to connect to.
 
-	config USE_RINGBUFFER
-		bool "Use xRingBuffer as IPC"
-		default n
-		help
-			Use xRingBuffer as IPC.
 endmenu

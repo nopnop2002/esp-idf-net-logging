@@ -76,7 +76,7 @@ You can use mDNS host name for your http server.
 ## Use xRingBuffer as IPC
 ![config-xRingBuffer](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/53aef0cc-0e44-4f19-a10c-d55bc78ef091)
 
-Both xMessageBuffer and xRingBuffer are interprocess communication components provided by ESP-IDF.   
+Both xMessageBuffer and xRingBuffer are interprocess communication (IPC) components provided by ESP-IDF.   
 Several drivers provided by ESP-IDF use xRingBuffer.   
 This project uses xMessageBuffer by default.   
 If you use this project at the same time as a driver that uses xRingBuffer, using xRingBuffer uses less memory.   

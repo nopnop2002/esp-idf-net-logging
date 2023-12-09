@@ -1,0 +1,9 @@
+menu "NET Logging"
+
+	config USE_RINGBUFFER
+		bool "Use xRingBuffer as IPC"
+		default n
+		help
+			Use xRingBuffer as IPC.
+
+endmenu

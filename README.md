@@ -21,18 +21,28 @@ The following protocols are available for this project.
 I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logging).
 
 # Software requirements
-esp-idf v4.4/v5.0.   
+esp-idf v4.3 ~ v5.0.   
 
 
-# Installation
-```Shell
-git clone https://github.com/nopnop2002/esp-idf-net-logging
-cd esp-idf-net-logging/basic
+# Build the example project
+```sh
+git clone https://github.com/nopnop2002/esp-idf-net-logging.git
+cd esp-idf-net-logging/examples/basic
 idf.py menuconfig
 idf.py flash
 ```
 
+# Add it to your project as a component
+In your project, add this as a git submodule to your components/ directory.
+```sh
+cd components
+git submodule add https://github.com/nopnop2002/esp-idf-net-logging.git
+git submodule update --init --recursive
+```
+
+
 # Configuration   
+The library can be configured via `idf.py menuconfig`.
 ![config-top](https://user-images.githubusercontent.com/6020549/151915919-d6f19861-8d48-4630-aeed-aab819929dc6.jpg)
 
 ## Configuration for UDP Redirect

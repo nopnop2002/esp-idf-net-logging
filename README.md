@@ -59,7 +59,8 @@ There are the following four methods for specifying the UDP Address.
 ## Configuration for TCP Redirect
 ![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
 
-You can use mDNS host name for your tcp server.
+You can use the mDNS hostname of such a TCP server instead of the IP address.   
+tcp-server.local   
 
 ## Configuration for MQTT Redirect
 ![config-mqtt](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/d27be5d2-6a1a-4c5f-86c9-6cdf4394d137)

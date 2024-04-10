@@ -26,6 +26,15 @@ idf.py flash
 ```
 
 
+# Enable PSRAM   
+In order to use PSRAM, you need to enable PSRAM by following the steps below.   
+![psram-1](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/9feae820-609d-4955-94d0-2d7e4e5887ab)
+![psram-2](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/3b6c8c0a-380f-492e-b72a-74d408c73fb0)
+![psram-3](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/a72b8638-8de1-4c9e-b8e1-98562e2b515e)
+![psram-4](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/ae980ac1-470e-4b9d-bd2b-82ec4777f204)
+![psram-5](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/76a7a4f3-e231-4509-b997-c1d710ee7301)
+
+
 # Features of this board   
 I used this tool to redirect log output to the network and view SoC information.   
 This board has 4MB of FLASH and 2MB of PSRAM.   

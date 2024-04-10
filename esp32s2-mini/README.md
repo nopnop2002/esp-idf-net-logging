@@ -4,7 +4,7 @@ I got this board.
 ![esp32-s2-mini-2](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/f67769eb-8a28-4885-a4af-dec0e009b182)
 
 A Type-C USB connector is mounted on the board, but a USB-TTL conversion chip is not mounted.   
-Just when I was wondering, Schematic was posted [here](https://www.wemos.cc/en/latest/_static/files/sch_s2_mini_v1.0.0.pdf).   
+Schematic was posted [here](https://www.wemos.cc/en/latest/_static/files/sch_s2_mini_v1.0.0.pdf).   
 USB ports D- and D+ are connected to GPIO19/20.   
 Since it uses the chip's USB-OTG function, it will not be recognized as a USB device even if you simply connect it to the host with a USB cable.   
 To write firmware, press ButtonRST while pressing Button0, then release ButtonRST and then Button0.   

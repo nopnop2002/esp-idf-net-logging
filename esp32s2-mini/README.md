@@ -38,6 +38,7 @@ In order to use PSRAM, you need to enable PSRAM by following the steps below.
 # Features of this board   
 I used this tool to redirect log output to the network and view SoC information.   
 This board has 4MB of FLASH and ___2MB of PSRAM___.   
-It is strange that it is recognized as having External Flash.   
+It's strange that it is recognized as having an external flash.   
+There is no external flash anywhere on the board.   
 
 ![esp32s2-mini](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/f36327cf-7e7b-4f1f-aa20-1eb16a0650ea)

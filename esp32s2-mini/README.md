@@ -20,7 +20,7 @@ To see the logging output, this tool requires redirection to the network.
 # Installation
 ```Shell
 git clone https://github.com/nopnop2002/esp-idf-net-logging
-cd esp-idf-net-logging/esp32s2-nimi
+cd esp-idf-net-logging/esp32s2-mini
 idf.py menuconfig
 idf.py flash
 ```

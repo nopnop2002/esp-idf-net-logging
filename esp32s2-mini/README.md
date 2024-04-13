@@ -11,7 +11,7 @@ To write firmware, press ButtonRST while pressing Button0, then release ButtonRS
 Now the device will enter DFU mode, the USB device (/dev/ttyACM0) will appear, and you can upload the firmware.   
 If you press ButtonRST without pressing Button0, the USB device will disappear.   
 In other words, USB can be used for writing, but not for STDOUT.   
-In ESP32-S2, GPIO43/44 are U0TXD/U0RXD, but this GPIO does not appear on the pin.   
+On ESP32-S2, GPIO43/44 are U0TXD/U0RXD, but this GPIO is not present on the pin header.   
 In other words, no matter what I do, it is a board that cannot be used for logging using a serial monitor.   
 It is completely unusable for development or debugging.   
 To see the logging output, this tool requires redirection to the network.   

@@ -95,6 +95,7 @@ Note that the most recent logging is displayed at the __top__.
 ![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)   
 We can also use [this](https://apps.microsoft.com/detail/9p4nn1x0mmzr) as Logging Viewer.   
 Note that the most recent logging is displayed at the __buttom__.   
+I like this one better.   
 ![windows-udp-server-11](https://github.com/user-attachments/assets/1d373809-7774-4e84-9256-2f81ec74368d)   
 There are others if you look for them.   
 

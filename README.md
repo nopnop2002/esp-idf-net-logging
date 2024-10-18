@@ -90,7 +90,6 @@ You can see the logging using python code or mosqutto client.
 ![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
 You can use ```netcat``` as server.   
 ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)
-
 We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.
 ![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)
 

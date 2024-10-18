@@ -56,8 +56,6 @@ There are the following four methods for specifying the UDP Address.
  It is possible to cross the router with an address that specifies all octets, such as 192.168.10.41.   
  Both the sender and receiver must specify the Unicast address.
 
-We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.
-![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)
 
 ## Configuration for TCP Redirect
 ![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
@@ -93,6 +91,9 @@ You can see the logging using python code or mosqutto client.
 You can use ```netcat``` as server.   
 ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)
 
+We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.
+![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)
+
 - for TCP   
 ![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)   
 You can use ```netcat``` as server.   
@@ -111,6 +112,12 @@ You can use [this](https://github.com/nopnop2002/esp-idf-mqtt-broker) as a broke
 
 - for HTTP   
 ![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
+
+# Disable ANSI Color control
+You can disable this if you are unable to display ANSI color codes correctly.   
+![ANSI-Color](https://github.com/user-attachments/assets/c36b5f74-e85a-48c0-b498-5cb5301f0d24)
+
+![windows-udp-server-2](https://github.com/user-attachments/assets/38d2c698-5690-402c-9419-a7dfe639e4d7)
 
 
 # API   

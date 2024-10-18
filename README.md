@@ -56,6 +56,9 @@ There are the following four methods for specifying the UDP Address.
  It is possible to cross the router with an address that specifies all octets, such as 192.168.10.41.   
  Both the sender and receiver must specify the Unicast address.
 
+We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.
+![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)
+
 ## Configuration for TCP Redirect
 ![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
 

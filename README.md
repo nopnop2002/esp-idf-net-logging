@@ -58,16 +58,19 @@ There are the following four methods for specifying the UDP Address.
 
 
 ## Configuration for TCP Redirect
+ESP32 works as a TCP client.   
 ![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
 
 You can use the mDNS hostname of such a TCP server instead of the IP address.   
 tcp-server.local   
+
 
 ## Configuration for MQTT Redirect
 ![config-mqtt](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/d27be5d2-6a1a-4c5f-86c9-6cdf4394d137)
 
 
 ## Configuration for HTTP Redirect
+ESP32 works as a HTTP client.   
 ![config-http](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/ea09b7e6-a95a-4351-8fb8-d6d9a9c398cb)
 
 You can use mDNS host name for your http server.

@@ -3,36 +3,40 @@
 import signal
 import socket
 import select
-
-server_ip = "0.0.0.0"
-server_port = 8080
-listen_num = 5
-buffer_size = 1024
+import argparse
 
 def handler(signal, frame):
-	global isRunning
+	global running
 	#print('handler')
-	isRunning = False
+	running = False
 
-def main():
+if __name__ == "__main__":
 	signal.signal(signal.SIGINT, handler)
+	running = True
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--port', type=int, help='tcp port', default=8080)
+	args = parser.parse_args()
+	print("args.port={}".format(args.port))
 
 	print("+==========================+")
 	print("| ESP32 TCP Logging Server |")
 	print("+==========================+")
 	print("")
 
+	server_ip = "0.0.0.0"
+	listen_num = 5
+	buffer_size = 1024
+
 	tcp_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	tcp_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	tcp_server.bind((server_ip, server_port))
+	tcp_server.bind((server_ip, args.port))
 	tcp_server.listen(listen_num)
 	client,address = tcp_server.accept()
 	#print("Connected!! [ Source : {}]".format(address))
 	client.setblocking(0)
 
-	global isRunning
-	isRunning = True
-	while isRunning:
+	while running:
 		ready = select.select([client], [], [], 1)
 		#print("ready={}".format(ready[0]))
 		if ready[0]:
@@ -43,6 +47,3 @@ def main():
 				print(data, end='')
 	
 	client.close()
-
-if __name__ == "__main__":
-	main()

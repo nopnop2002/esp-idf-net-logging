@@ -1,4 +1,5 @@
-# coding: utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # curl -X POST -H "Content-Type: application/json" -d '{"Name":"hogehoge1973", "Age":"100"}' http://192.168.10.46:8000/post
 
@@ -8,6 +9,7 @@ from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
+import argparse
 
 class class1(BaseHTTPRequestHandler):
 	def do_POST(self):
@@ -28,14 +30,19 @@ class class1(BaseHTTPRequestHandler):
 		self.end_headers()
 		self.wfile.write(body.encode())
 
-#ip = '127.0.0.1'
-ip = '0.0.0.0'
-port = 8000
+if __name__=='__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--port', type=int, help='tcp port', default=8000)
+	args = parser.parse_args()
+	print("args.port={}".format(args.port))
 
-print("+===========================+")
-print("| ESP32 HTTP Logging Server |")
-print("+===========================+")
-print("")
-server = HTTPServer((ip, port), class1)
+	#ip = '127.0.0.1'
+	ip = '0.0.0.0'
 
-server.serve_forever()
+	print("+===========================+")
+	print("| ESP32 HTTP Logging Server |")
+	print("+===========================+")
+	print("")
+	server = HTTPServer((ip, args.port), class1)
+
+	server.serve_forever()

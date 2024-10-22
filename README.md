@@ -121,7 +121,7 @@ You can see the logging using python code or mosqutto client.
  ![net-logging-mqtt-local](https://user-images.githubusercontent.com/6020549/182275982-63581071-c0b0-4851-a928-b5e2286b6893.jpg)
 
 - for HTTP   
-![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
+ ![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
 
 # Disable ANSI Color control
 You can disable this if you are unable to display ANSI color codes correctly.   

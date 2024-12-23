@@ -127,10 +127,10 @@ You can see the logging using python code or mosqutto client.
 You can disable this if you are unable to display ANSI color codes correctly.   
 ![ANSI-Color](https://github.com/user-attachments/assets/c36b5f74-e85a-48c0-b498-5cb5301f0d24)   
 
-- Enable ANSI Color control   
+Enable ANSI Color control   
 ![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)   
 
-- Disable ANSI Color control   
+Disable ANSI Color control   
 ![windows-udp-server-2](https://github.com/user-attachments/assets/38d2c698-5690-402c-9419-a7dfe639e4d7)   
 
 

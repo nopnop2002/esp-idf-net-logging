@@ -88,7 +88,7 @@ If you use this project at the same time as a driver that uses xRingBuffer, usin
 Memory usage status can be checked with ```idf.py size-files```.   
 
 # View logging   
-You can see the logging using python code or mosqutto client.   
+You can view the logging using python code or various tools.   
 - for UDP   
  ![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
  You can use ```netcat``` as server.   

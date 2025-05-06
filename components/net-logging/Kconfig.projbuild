@@ -27,6 +27,10 @@ menu "NET Logging"
 			bool "HTTP Logging"
 			help
 				Enable HTTP Logging
+		config ENABLE_SSE_SERVER_LOG
+			bool "SSE Logging"
+			help
+				Enable SSE Logging Server
 	endchoice
 
 	config ESP_WIFI_SSID
@@ -95,6 +99,13 @@ menu "NET Logging"
 		default "http://myhttpserver.local:8000"
 		help
 			URL of the http server to connect to.
+
+	config LOG_SSE_LISTEN_PORT
+		depends on ENABLE_SSE_SERVER_LOG
+		int "Port to bind the SSE server on"
+		default 8080
+		help
+			Port to bind the SSE server on
 
 	config USE_RINGBUFFER
 		bool "Use xRingBuffer as IPC"

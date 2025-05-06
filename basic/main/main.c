@@ -161,6 +161,10 @@ void app_main()
 	ESP_ERROR_CHECK(http_logging_init( CONFIG_LOG_HTTP_SERVER_URL, write_to_stdout ));
 #endif // CONFIG_ENABLE_HTTP_LOG
 
+#if CONFIG_ENABLE_SSE_SERVER_LOG
+	ESP_ERROR_CHECK(sse_logging_init( CONFIG_LOG_SSE_LISTEN_PORT, write_to_stdout ));
+#endif // CONFIG_ENABLE_SSE_SERVER_LOG
+
 	ESP_LOGI(TAG, "This is info level");
 	ESP_LOGW(TAG, "This is warning level");
 	ESP_LOGE(TAG, "This is error level");

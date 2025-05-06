@@ -36,6 +36,7 @@ idf.py flash
 ![config-top](https://user-images.githubusercontent.com/6020549/151915919-d6f19861-8d48-4630-aeed-aab819929dc6.jpg)
 
 ## Configuration for UDP Redirect
+ESP32 works as a UDP client.   
 ![config-udp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/5a9914ff-53a7-44f9-9ebf-08641c5123da)
 
 There are the following four methods for specifying the UDP Address.

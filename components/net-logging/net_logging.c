@@ -127,7 +127,7 @@ esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
 	configASSERT( xRingBufferTrans );
 #else
-	printf("start HTTP Server Sent Events logging(xMessageBuffer): SSE server listening on port=%ld\n", port);
+	printf("start HTTP Server Sent Events logging(xMessageBuffer): SSE server starting on port=%ld\n", port);
 	// Create MessageBuffer
 	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
 	configASSERT( xMessageBufferTrans );

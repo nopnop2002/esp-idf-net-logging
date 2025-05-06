@@ -16,6 +16,8 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h" // for vTaskDelete()
+#include "freertos/event_groups.h"
+
 #if CONFIG_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
@@ -32,35 +34,42 @@
 extern const unsigned char sse_html_start[] asm("_binary_sse_html_start");
 extern const unsigned char sse_html_end[] asm("_binary_sse_html_end");
 
+#define STOP_SERVING_CLIENT	( 1 << 0 )
+#define STOPPED_SERVING_CLIENT	( 1 << 1 )
+
 #if CONFIG_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTrans;
 #else
 extern MessageBufferHandle_t xMessageBufferTrans;
 #endif
 
-void serve_client(int client_sock) {
+void serve_client(void *pvParameters) {
+  void** params = (void**)pvParameters;
+  const int* client_sock_ptr = (int*)params[0];
+  int client_sock = *client_sock_ptr;
+  const EventGroupHandle_t* client_serving_task_events_ptr = (EventGroupHandle_t*)params[1];
+  EventGroupHandle_t client_serving_task_events = *client_serving_task_events_ptr;
   const size_t sse_html_size = sse_html_end - sse_html_start;
 
   // Receive HTTP request
-  char rx_buffer[1024];
-  int rx_len = recv(client_sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-  if (rx_len <= 0) {
+  char request[1024];
+  int req_len = recv(client_sock, request, sizeof(request) - 1, 0);
+  //printf("request received: %.*s\n", req_len, request);
+  if (req_len <= 0) {
     // printf("Connection closed or error\n");
+    shutdown(client_sock, 0);
     close(client_sock);
-    return;
+    vTaskDelete(NULL);
   }
 
   // Null-terminate received data
-  rx_buffer[rx_len] = 0;
+  request[req_len] = 0;
 
   // Check if the request is for the root path (/)
-  if (strstr(rx_buffer, "GET / HTTP") != NULL) {
-    // Serve the HTML file
-    // printf("Serving HTML file\n");
-
+  if (strstr(request, "GET / HTTP") != NULL) {
     // Prepare HTTP response
-    char resp_header[256];
-    snprintf(resp_header, sizeof(resp_header),
+    char headers[256];
+    snprintf(headers, sizeof(headers),
              "HTTP/1.1 200 OK\r\n"
              "Content-Type: text/html\r\n"
              "Content-Length: %d\r\n"
@@ -69,34 +78,34 @@ void serve_client(int client_sock) {
              sse_html_size);
 
     // Send header
-    send(client_sock, resp_header, strlen(resp_header), 0);
+    send(client_sock, headers, strlen(headers), 0);
 
     // Send file content
     send(client_sock, sse_html_start, sse_html_size, 0);
   }
   // Check if the request is for the SSE endpoint
-  else if (strstr(rx_buffer, "GET /log-events HTTP") != NULL) {
-    // Set up SSE connection
-    // printf("SSE connection established\n");
-
+  else if (strstr(request, "GET /log-events HTTP") != NULL) {
+    //printf("SSE client connected\n");
     // Send SSE headers
-    const char *sse_headers = "HTTP/1.1 200 OK\r\n"
+    const char *headers = "HTTP/1.1 200 OK\r\n"
                               "Content-Type: text/event-stream\r\n"
+                              "retry: 1000\r\n"
                               "Cache-Control: no-cache\r\n"
                               "Connection: keep-alive\r\n"
                               "Access-Control-Allow-Origin: *\r\n"
                               "\r\n";
 
-    send(client_sock, sse_headers, strlen(sse_headers), 0);
+    send(client_sock, headers, strlen(headers), 0);
+    //printf("serving SSE\n");
 
     // Keep connection open and send SSE events
-    while (1) {
+    while ((xEventGroupGetBits(client_serving_task_events) & STOP_SERVING_CLIENT) == 0) {
       #if CONFIG_USE_RINGBUFFER
       size_t received;
-      char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+      char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, pdMS_TO_TICKS(10));
       #else
       char buffer[xItemSize];
-      size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
+      size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), pdMS_TO_TICKS(10));
       #endif
 
       if (received > 0) {
@@ -114,8 +123,6 @@ void serve_client(int client_sock) {
           // printf("Error sending SSE event: errno %d\n", errno);
           break;
         }
-      } else {
-        break;
       }
     }
   } else {
@@ -126,12 +133,15 @@ void serve_client(int client_sock) {
     "Connection: close\r\n"
     "\r\n"
     "Not Found";
-
     send(client_sock, not_found, strlen(not_found), 0);
   }
 
   // Close connection
+  //printf("closing connection\n");
+  shutdown(client_sock, 0);
   close(client_sock);
+  xEventGroupSetBits(client_serving_task_events, STOPPED_SERVING_CLIENT );
+  vTaskDelete(NULL);
 }
 
 void sse_server(void *pvParameters) {
@@ -182,17 +192,47 @@ void sse_server(void *pvParameters) {
   xTaskNotifyGive(param.taskHandle);
 
   // Main server loop
+  static EventGroupHandle_t client_serving_task_events;
+  StaticEventGroup_t client_serving_task_events_data;
+  client_serving_task_events = xEventGroupCreateStatic( &client_serving_task_events_data );
+  TaskHandle_t client_task = NULL;
+  static int client_sock;
   while (1) {
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
-    int client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_len);
-
+    client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_len);
     if (client_sock < 0) {
-      // printf("Unable to accept connection: errno %d\n", errno);
+      //printf("Unable to accept connection: errno %d\n", errno);
       continue;
     }
 
-    serve_client(client_sock);
+    // Stop serving the previous client, if any
+    if (client_task != NULL) {
+      xEventGroupSetBits(client_serving_task_events, STOP_SERVING_CLIENT );
+      xEventGroupWaitBits(
+        client_serving_task_events,
+        STOPPED_SERVING_CLIENT,
+        pdTRUE,
+        pdFALSE,
+        portMAX_DELAY
+      );
+      client_task = NULL;
+    }
+
+    // serve new client
+    xEventGroupClearBits(client_serving_task_events, STOP_SERVING_CLIENT | STOPPED_SERVING_CLIENT );
+    void* client_pvParams[] = {
+      (void*)&client_sock,
+      (void*)&client_serving_task_events
+    };
+    xTaskCreate(
+      serve_client,
+      "LOGS_SSE_SERVE_CLIENT",
+      1024*4,
+      (void*) client_pvParams,
+      2,
+      &client_task
+    );
   }
 
   if (server_sock != -1) {

@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP Logs</title>
+  <style>
+    :root {
+      --bg-color: #222;
+      --text-color: #f0f0f0;
+      --header-color: #3498db;
+    }
+    
+    body {
+      font-family: monospace;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    h1 {
+      color: var(--header-color);
+      margin: 0;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+    
+    button {
+      background-color: #333;
+      color: var(--text-color);
+      border: 1px solid #555;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #444;
+    }
+    
+    #logs {
+      background-color: #111;
+      border-radius: 6px;
+      padding: 10px;
+      height: calc(100vh - 150px);
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .log-line {
+      display: block;
+      padding: 1px 5px;
+      margin-bottom: 2px;
+      border-left: 3px solid #555;
+    }
+    
+    .log-line:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .status {
+      font-size: 0.8em;
+      margin-top: 10px;
+      color: #777;
+    }
+    
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-color: #f5f5f5;
+        --text-color: #333;
+      }
+      
+      #logs {
+        background-color: #fff;
+        border: 1px solid #ddd;
+      }
+      
+      button {
+        background-color: #e0e0e0;
+        color: #333;
+        border: 1px solid #ccc;
+      }
+      
+      button:hover {
+        background-color: #d0d0d0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>ESP32 Logs</h1>
+      <div class="controls">
+        <button id="clearBtn">Clear</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="scrollBtn">Auto-scroll</button>
+      </div>
+    </header>
+    
+    <div id="logs"></div>
+    
+    <div class="status">
+      <span id="connection">Connecting...</span>
+    </div>
+  </div>
+  
+  <script>
+    // Elements
+    const logsContainer = document.getElementById('logs');
+    const clearBtn = document.getElementById('clearBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const scrollBtn = document.getElementById('scrollBtn');
+    const connectionStatus = document.getElementById('connection');
+    
+    // State
+    let isPaused = false;
+    let autoScroll = true;
+    
+    // Initialize UI state
+    updateButtons();
+    
+    // Set up event handlers
+    clearBtn.addEventListener('click', clearLogs);
+    pauseBtn.addEventListener('click', togglePause);
+    scrollBtn.addEventListener('click', toggleScroll);
+    
+    // Functions
+    function clearLogs() {
+      logsContainer.innerHTML = '';
+    }
+    
+    function togglePause() {
+      isPaused = !isPaused;
+      updateButtons();
+    }
+    
+    function toggleScroll() {
+      autoScroll = !autoScroll;
+      updateButtons();
+    }
+    
+    function updateButtons() {
+      pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+      pauseBtn.style.backgroundColor = isPaused ? '#e74c3c' : '';
+      
+      scrollBtn.textContent = `Auto-scroll: ${autoScroll ? 'ON' : 'OFF'}`;
+      scrollBtn.style.backgroundColor = autoScroll ? '#2ecc71' : '';
+    }
+
+    function onLogLineReceived(event) {
+      if (isPaused) return;
+
+      const log = document.createElement('span');
+      log.className = 'log-line';
+      log.innerText = event.data;
+      logsContainer.appendChild(log);
+
+      if (autoScroll) {
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }
+    }
+
+    function onConnected() {
+      connectionStatus.textContent = 'Connected';
+      connectionStatus.style.color = '#2ecc71';
+    }
+
+    function onDisconnected() {
+      connectionStatus.textContent = 'Disconnected';
+      connectionStatus.style.color = '#e74c3c';
+    }
+
+    function subscribeToSSE() {
+      const source = new EventSource('/log-events');
+      source.onopen = onConnected;
+      source.onerror = onDisconnected;
+      source.addEventListener('log-line', onLogLineReceived, false);
+    }
+
+    // Subscribe to Server-Sent Events
+    if (!!window.EventSource) {
+      subscribeToSSE();
+    } else {
+      logsContainer.innerHTML = '<span class="log-line">Your browser does not support Server-Sent Events.</span>';
+    }
+  </script>
+</body>
+</html>

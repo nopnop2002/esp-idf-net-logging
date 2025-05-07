@@ -117,6 +117,38 @@ esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdou
 	return ESP_OK;
 }
 
+void sse_server(void *pvParameters);
+
+esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
+
+#if CONFIG_USE_RINGBUFFER
+	printf("start HTTP Server Sent Events logging(xRingBuffer): SSE server listening on port=%ld\n", port);
+	// Create RineBuffer
+	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
+	configASSERT( xRingBufferTrans );
+#else
+	printf("start HTTP Server Sent Events logging(xMessageBuffer): SSE server starting on port=%ld\n", port);
+	// Create MessageBuffer
+	xMessageBufferTrans = xMessageBufferCreate(xBufferSizeBytes);
+	configASSERT( xMessageBufferTrans );
+#endif
+
+	// Start SSE Server
+	PARAMETER_t param;
+	param.port = port;
+	param.taskHandle = xTaskGetCurrentTaskHandle();
+	xTaskCreate(sse_server, "HTTP SSE", 1024*6, (void *)&param, 2, NULL);
+
+	// Wait for ready to receive notify
+	ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+	//printf("ulTaskNotifyTake\n");
+
+	// Set function used to output log entries.
+	writeToStdout = enableStdout;
+	esp_log_set_vprintf(logging_vprintf);
+	return ESP_OK;
+}
+
 void mqtt_pub(void *pvParameters);
 
 esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout) {

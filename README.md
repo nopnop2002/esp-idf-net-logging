@@ -81,7 +81,6 @@ You can use mDNS host name for your http server.
 
 ## Configuration for SSE Redirect
 ESP32 works as a SSE server.   
-Processing will pause until a client connects.   
 ![Image](https://github.com/user-attachments/assets/463f3d4f-e38c-4698-8d4a-070116d65604)
 
 

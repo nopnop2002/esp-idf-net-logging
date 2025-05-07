@@ -155,4 +155,5 @@ esp_err_t udp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdou
 esp_err_t tcp_logging_init(char *ipaddr, unsigned long port, int16_t enableStdout);
 esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout);
 esp_err_t http_logging_init(char *url, int16_t enableStdout);
+esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout);
 ```

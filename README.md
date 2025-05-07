@@ -17,11 +17,14 @@ The following protocols are available for this project.
 - TCP   
 - MQTT   
 - HTTP(POST)   
+- SSE   
 
 I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logging).
 
 # Software requirements
-esp-idf v4.4/v5.x.   
+ESP-IDF V5.0 or later.   
+ESP-IDF V4.4 release branch reached EOL in July 2024.   
+ESP-IDF V5.1 is required when using ESP32-C6.   
 
 
 # Installation
@@ -72,9 +75,15 @@ tcp-server.local
 
 ## Configuration for HTTP Redirect
 ESP32 works as a HTTP client.   
+You can use mDNS host name for your http server.
 ![config-http](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/ea09b7e6-a95a-4351-8fb8-d6d9a9c398cb)
 
-You can use mDNS host name for your http server.
+
+## Configuration for SSE Redirect
+ESP32 works as a SSE server.   
+Processing will pause until a client connects.   
+![Image](https://github.com/user-attachments/assets/463f3d4f-e38c-4698-8d4a-070116d65604)
+
 
 ## Disable Logging to STDOUT
 ![config-stdout](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/c8516a79-4c55-414f-b0b6-41eff0006e72)
@@ -91,38 +100,42 @@ Memory usage status can be checked with ```idf.py size-files```.
 # View logging   
 You can view the logging using python code or various tools.   
 - for UDP   
- ![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
- You can use ```netcat``` as server.   
- ![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)   
- We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.   
- Note that the most recent logging is displayed at the __top__.   
- ![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)   
- We can also use [this](https://apps.microsoft.com/detail/9p4nn1x0mmzr) as Logging Viewer.   
- Note that the most recent logging is displayed at the __buttom__.   
- I like this one better.   
- ![windows-udp-server-11](https://github.com/user-attachments/assets/1d373809-7774-4e84-9256-2f81ec74368d)   
- There are others if you look for them.   
+	![net-logging-udp](https://user-images.githubusercontent.com/6020549/182273454-834cedb7-d884-4a89-823f-13e5d7a1c6b5.jpg)   
+	You can use ```netcat``` as server.   
+	![netcat-udp](https://user-images.githubusercontent.com/6020549/198207929-649537ae-0c4e-45ed-8c88-7167505b124e.jpg)   
+	We can use [this](https://apps.microsoft.com/detail/9nblggh52bt0) as Logging Viewer.   
+	Note that the most recent logging is displayed at the __top__.   
+	![windows-udp-server](https://github.com/user-attachments/assets/0313b845-1a8d-4e06-9a02-1bb91de895d2)   
+	We can also use [this](https://apps.microsoft.com/detail/9p4nn1x0mmzr) as Logging Viewer.   
+	Note that the most recent logging is displayed at the __buttom__.   
+	I like this one better.   
+	![windows-udp-server-11](https://github.com/user-attachments/assets/1d373809-7774-4e84-9256-2f81ec74368d)   
+	There are others if you look for them.   
 
 - for TCP   
- ![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)   
- You can use ```netcat``` as server.   
- ![netcat-tcp](https://user-images.githubusercontent.com/6020549/198230565-4fece92e-349f-4555-aba6-2196d3b6c040.jpg)   
- We can use [this](https://sourceforge.net/projects/sockettest/) as Logging Viewer.   
- ![windows-tcp-server-1](https://github.com/user-attachments/assets/76baaaba-2453-47d1-8acc-6f045413fdcc)   
+	![net-logging-tcp](https://user-images.githubusercontent.com/6020549/182273510-92cf406b-7197-4cfe-9ff6-5421dc8eea8d.jpg)   
+	You can use ```netcat``` as server.   
+	![netcat-tcp](https://user-images.githubusercontent.com/6020549/198230565-4fece92e-349f-4555-aba6-2196d3b6c040.jpg)   
+	We can use [this](https://sourceforge.net/projects/sockettest/) as Logging Viewer.   
+	![windows-tcp-server-1](https://github.com/user-attachments/assets/76baaaba-2453-47d1-8acc-6f045413fdcc)   
 
 - for MQTT   
- The wifi logging is output in two parts.   
- First time:W (7060) wifi:   
- Second time:Characters after that   
- In MQTT and HTTP, it is displayed separately in two.   
- __If you use broker.emqx.io, continuous Logging will drop.__   
- ![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/182273560-fc1931bf-71f7-4751-a57d-680312a93391.jpg)   
- __Using a local MQTT server is stable.__   
- You can use [this](https://github.com/nopnop2002/esp-idf-mqtt-broker) as a broker.   
- ![net-logging-mqtt-local](https://user-images.githubusercontent.com/6020549/182275982-63581071-c0b0-4851-a928-b5e2286b6893.jpg)
+	The wifi logging is output in two parts.   
+	First time:W (7060) wifi:   
+	Second time:Characters after that   
+	In MQTT and HTTP, it is displayed separately in two.   
+	__If you use broker.emqx.io, continuous Logging will drop.__   
+	![net-logging-mqtt](https://user-images.githubusercontent.com/6020549/182273560-fc1931bf-71f7-4751-a57d-680312a93391.jpg)   
+	__Using a local MQTT server is stable.__   
+	You can use [this](https://github.com/nopnop2002/esp-idf-mqtt-broker) as a broker.   
+	![net-logging-mqtt-local](https://user-images.githubusercontent.com/6020549/182275982-63581071-c0b0-4851-a928-b5e2286b6893.jpg)
 
 - for HTTP   
- ![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
+	![net-logging-http](https://user-images.githubusercontent.com/6020549/182273590-26281a3c-c048-466a-9d00-764981f89b49.jpg)
+
+- for SSE   
+	Open a browser and enter the IP address of the ESP32 in the address bar.
+	![Image](https://github.com/user-attachments/assets/15a45454-03c1-49be-a5fa-1e1328c24d89)
 
 # Disable ANSI Color control
 You can disable this if you are unable to display ANSI color codes correctly.   

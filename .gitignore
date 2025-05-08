@@ -1,3 +1,7 @@
 build/
+__pycache__/
+*.DS_Store
+*.swp
 sdkconfig
 sdkconfig.old
+dependencies.lock

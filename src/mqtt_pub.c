@@ -21,7 +21,11 @@
 #endif
 #include "esp_log.h"
 #include "esp_event.h"
-#include "esp_mac.h" // esp_base_mac_addr_get
+
+#if ESP_IDF_VERSION > ESP_IDF_VERSION_VAL(4, 4, 0)
+	#include "esp_mac.h" // esp_base_mac_addr_get
+#endif
+
 #include "mqtt_client.h"
 
 #include "net_logging.h"

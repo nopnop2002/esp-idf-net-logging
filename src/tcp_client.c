@@ -69,7 +69,7 @@ void tcp_client(void *pvParameters)
 	}
 	printf("Socket created, connecting to %s:%d\n", param.ipv4, param.port);
 
-	int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr_in6));
+	int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr_in));
 	if (err == 0) {
 		printf("Successfully connected\n");
 	} else {

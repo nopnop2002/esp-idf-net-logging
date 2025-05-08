@@ -28,15 +28,25 @@ ESP-IDF V4.4 release branch reached EOL in July 2024.
 ESP-IDF V5.1 is required when using ESP32-C6.   
 
 
-# Installation
-```Shell
-git clone https://github.com/nopnop2002/esp-idf-net-logging
-cd esp-idf-net-logging/basic
+# Build the example project
+```sh
+git clone https://github.com/nopnop2002/esp-idf-net-logging.git
+cd esp-idf-net-logging/examples/basic
 idf.py menuconfig
 idf.py flash
 ```
 
+# Add it to your project as a component
+In your project, add this as a git submodule to your components/ directory.
+```sh
+cd components
+git submodule add https://github.com/nopnop2002/esp-idf-net-logging.git
+git submodule update --init --recursive
+```
+
+
 # Configuration   
+The library can be configured via `idf.py menuconfig`.
 ![config-top](https://user-images.githubusercontent.com/6020549/151915919-d6f19861-8d48-4630-aeed-aab819929dc6.jpg)
 
 ## Configuration for UDP Redirect

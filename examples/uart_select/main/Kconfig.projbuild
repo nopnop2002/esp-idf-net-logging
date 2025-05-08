@@ -1,0 +1,99 @@
+menu "Example Project Config"
+
+	config WRITE_TO_STDOUT
+		bool "Enable write Logging to STDOUT"
+		default y
+		help
+			Enable write Logging to STDOUT.
+
+	choice ENABLE_LOG
+		prompt "Protocol"
+		default ENABLE_UDP_LOG
+		help
+			Select Logging protocol.
+		config ENABLE_UDP_LOG
+			bool "UDP Logging"
+			help
+				Enable UDP Logging
+		config ENABLE_TCP_LOG
+			bool "TCP Logging"
+			help
+				Enable TCP Logging
+		config ENABLE_MQTT_LOG
+			bool "MQTT Logging"
+			help
+				Enable MQTT Logging
+		config ENABLE_HTTP_LOG
+			bool "HTTP Logging"
+			help
+				Enable HTTP Logging
+	endchoice
+
+	config ESP_WIFI_SSID
+		string "WiFi SSID"
+		default "myssid"
+		help
+			SSID (network name) for the example to connect to.
+
+	config ESP_WIFI_PASSWORD
+		string "WiFi Password"
+		default "mypassword"
+		help
+			WiFi password (WPA or WPA2) for the example to use.
+
+	config ESP_MAXIMUM_RETRY
+		int "Maximum retry"
+		default 5
+		help
+			Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+	config LOG_UDP_SERVER_IP
+		depends on ENABLE_UDP_LOG
+		string "IP address to send log output"
+		default "255.255.255.255"
+		help
+			IP address to send log output to
+
+	config LOG_UDP_SERVER_PORT
+		depends on ENABLE_UDP_LOG
+		int "Port to send log output" 
+		default 6789
+		help
+			Port to send log output to
+
+	config LOG_TCP_SERVER_IP
+		depends on ENABLE_TCP_LOG
+		string "IP address to send log output"
+		default "192.168.10.46"
+		help
+			IP address to send log output to
+
+	config LOG_TCP_SERVER_PORT
+		depends on ENABLE_TCP_LOG
+		int "Port to send log output" 
+		default 8080
+		help
+			Port to send log output to
+
+	config LOG_MQTT_SERVER_URL
+		depends on ENABLE_MQTT_LOG
+		string "URL of the mqtt server to connect to"
+		default "mqtt://broker.emqx.io:1883"
+		help
+			URL of the mqtt server to connect to
+
+	config LOG_MQTT_PUB_TOPIC
+		depends on ENABLE_MQTT_LOG
+		string "Publish Topic"
+		default "/esp32/logging"
+		help
+			Topic of publish
+
+  config LOG_HTTP_SERVER_URL
+		depends on ENABLE_HTTP_LOG
+    string "URL of the http server to connect to"
+    default "http://myhttpserver.local:8000"
+    help
+      URL of the http server to connect to.
+
+endmenu

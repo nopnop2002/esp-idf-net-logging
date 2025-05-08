@@ -30,31 +30,37 @@ static int logging_vprintf( const char *fmt, va_list l ) {
         printf("logging_vprintf malloc fail\n");
         return 0;
     }
-	int str_len = vsnprintf(buffer, xItemSize, fmt, l);
+	int len = vsnprintf(buffer, xItemSize, fmt, l);
+    if (len >= xItemSize) {
+        // Truncate the string to fit the buffer
+        len = xItemSize - 1;
+        buffer[len] = '\0'; // Ensure null-termination
+    }
 	//printf("logging_vprintf str_len=%d\n",str_len);
 	//printf("logging_vprintf buffer=[%.*s]\n", str_len, buffer);
-	if (str_len > 0) {
+	if (len > 0) {
+        const int cstr_len = len + 1; // Include null terminator
 		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		// Send RingBuffer
-		BaseType_t sended = xRingbufferSendFromISR(xRingBufferTrans, &buffer, str_len, &xHigherPriorityTaskWoken);
+		BaseType_t sended = xRingbufferSendFromISR(xRingBufferTrans, buffer, cstr_len, &xHigherPriorityTaskWoken);
 		//printf("logging_vprintf sended=%d\n",sended);
 		//assert(sended == pdTRUE); -- don't die if buffer overflows
 #else
 		// Send MessageBuffer
-		size_t sended = xMessageBufferSendFromISR(xMessageBufferTrans, &buffer, str_len, &xHigherPriorityTaskWoken);
+		size_t sended = xMessageBufferSendFromISR(xMessageBufferTrans, buffer, cstr_len, &xHigherPriorityTaskWoken);
 		//printf("logging_vprintf sended=%d\n",sended);
 		// assert(sended == str_len); -- don't die if buffer overflows
 #endif
-	}
 
-	// Write to stdout
-	if (writeToStdout) {
-        //return vprintf( fmt, l );
-        //printf( "%s", buffer ); // we already formatted the string, so just print it
-        fwrite( buffer, sizeof(char), str_len, stdout );
-        //fflush(stdout); // make sure it gets printed immediately
-	} 
+        // Write to stdout
+        if (writeToStdout) {
+            //return vprintf( fmt, l );
+            //printf( "%s", buffer ); // we already formatted the string, so just print it
+            fwrite( buffer, sizeof(char), cstr_len, stdout );
+            //fflush(stdout); // make sure it gets printed immediately
+        } 
+	}
 
     free(buffer);
     return 0;

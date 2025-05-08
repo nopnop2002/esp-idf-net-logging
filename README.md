@@ -178,7 +178,7 @@ To                         Action      From
 514/udp (v6)               ALLOW       Anywhere (v6)
 ```
 
-esp-idf logging goes to /var/log/remote.   
+Logging from esp-idf goes to /var/log/remote.   
 ```
 $ tail -f /var/log/remote
 May  8 14:06:09 I (6688) MAIN: This is info level

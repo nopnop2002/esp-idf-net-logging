@@ -136,6 +136,61 @@ You can view the logging using python code or various tools.
 	Open a browser and enter the IP address of the ESP32 in the address bar.
 	![Image](https://github.com/user-attachments/assets/15a45454-03c1-49be-a5fa-1e1328c24d89)
 
+
+# Using linux rsyslogd as logger   
+We can forward logging to rsyslogd on Linux machine.   
+Configure with protocol = UDP and port number = 514.   
+![Image](https://github.com/user-attachments/assets/7d7c6cc2-2f58-40ec-8a3d-afbc80305403)
+
+Execute the following command on the Linux machine that will receive the logging data.   
+```
+$ cd /etc/rsyslog.d/
+$ sudo vi 99-remote.conf
+module(load="imudp")
+input(type="imudp" port="514")
+
+if $fromhost-ip != '127.0.0.1' and $fromhost-ip != 'localhost' then {
+    action(type="omfile" file="/var/log/remote")
+    stop
+}
+$ sudo ufw enable
+$ sudo ufw allow 514/udp
+$ sudo systemctl restart rsyslog
+$ ss -nulp | grep 514
+UNCONN 0      0            0.0.0.0:514        0.0.0.0:*
+UNCONN 0      0               [::]:514           [::]:*
+$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+514/udp                    ALLOW       Anywhere
+514/udp (v6)               ALLOW       Anywhere (v6)
+```
+
+esp-idf logging goes to /var/log/remote.   
+```
+$ tail -f /var/log/remote
+May  8 14:06:09 I (6688) MAIN: This is info level
+May  8 14:06:09 W (6698) MAIN: This is warning level
+May  8 14:06:09 E (6698) MAIN: This is error level
+May  8 14:06:09 I (6698) MAIN: freeRTOS version:V10.5.1
+May  8 14:06:09 I (6708) MAIN: NEWLIB version:4.3.0
+May  8 14:06:09 I (6708) MAIN: lwIP version:2-2-0-0
+May  8 14:06:09 I (6708) MAIN: ESP-IDF version:v5.4.1-dirty
+May  8 14:06:09 I (6718) MAIN: chip model is 1,
+May  8 14:06:09 I (6718) MAIN: chip with 2 CPU cores, WiFi/BT/BLE
+May  8 14:06:09 I (6718) MAIN: silicon revision 100
+May  8 14:06:09 I (6728) MAIN: 2MB external flash
+May  8 14:06:09 I (6728) main_task: Returned from app_main()
+May  8 14:06:09 I (7398) wifi:
+May  8 14:06:09 192.168.10.130  <ba-add>idx:0 (ifx:0, f8:b7:97:36:de:52), tid:5, ssn:0, winSize:64
+May  8 14:06:09 192.168.10.130
+May  8 14:06:10 I (7498) wifi:
+May  8 14:06:10 192.168.10.130  <ba-add>idx:1 (ifx:0, f8:b7:97:36:de:52), tid:0, ssn:4, winSize:64
+May  8 14:06:10 192.168.10.130
+```
+
 # Disable ANSI Color control
 You can disable this if you are unable to display ANSI color codes correctly.   
 ![ANSI-Color](https://github.com/user-attachments/assets/c36b5f74-e85a-48c0-b498-5cb5301f0d24)   

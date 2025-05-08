@@ -19,6 +19,7 @@ The following protocols are available for this project.
 - HTTP(POST)   
 - SSE   
 
+We can use Linux's rsyslogd as the logger.   
 I referred to [this](https://github.com/MalteJ/embedded-esp32-component-udp_logging).
 
 # Software requirements

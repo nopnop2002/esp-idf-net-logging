@@ -143,6 +143,8 @@ Configure with protocol = UDP and port number = 514.
 ![Image](https://github.com/user-attachments/assets/7d7c6cc2-2f58-40ec-8a3d-afbc80305403)
 
 Execute the following command on the Linux machine that will receive the logging data.   
+I used Ubuntu 22.04.   
+
 ```
 $ cd /etc/rsyslog.d/
 $ sudo vi 99-remote.conf

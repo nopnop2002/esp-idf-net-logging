@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -22,9 +22,9 @@
 #include "lwip/sockets.h"
 #include "netdb.h" // gethostbyname
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTrans;
 #else
 extern MessageBufferHandle_t xMessageBufferTrans;
@@ -81,7 +81,7 @@ void tcp_client(void *pvParameters)
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
         size_t received;
         char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
         //printf("xRingBufferReceive received=%d\n", received);
@@ -94,7 +94,7 @@ void tcp_client(void *pvParameters)
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			int ret = send(sock, buffer, received, 0);
 			LWIP_ASSERT("ret == received", ret == received);
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
             vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
 #endif
 		} else {

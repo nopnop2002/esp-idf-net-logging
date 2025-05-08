@@ -14,7 +14,7 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -28,12 +28,12 @@
 
 #include "mqtt_client.h"
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
 EventGroupHandle_t mqtt_status_event_group;
 #define MQTT_CONNECTED_BIT BIT2
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTrans;
 #else
 extern MessageBufferHandle_t xMessageBufferTrans;
@@ -130,7 +130,7 @@ void mqtt_pub(void *pvParameters)
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		size_t received;
 		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
 		//printf("xRingBufferReceive received=%d\n", received);
@@ -153,7 +153,7 @@ void mqtt_pub(void *pvParameters)
 			} else {
 				printf("Connection to MQTT broker is broken. Skip to send\n");
 			}
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
 #endif
 		} else {

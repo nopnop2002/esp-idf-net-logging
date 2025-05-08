@@ -1,9 +1,29 @@
 menu "NET Logging"
 
-	config USE_RINGBUFFER
+	config NET_LOGGING_USE_RINGBUFFER
 		bool "Use xRingBuffer as IPC"
 		default n
 		help
 			Use xRingBuffer as IPC.
+
+	config NET_LOGGING_MESSAGE_MAX_LENGTH
+		int "Max message length"
+		default 256
+		help
+			Set the maximum message length.
+			Note: This is the maximum length of a single log message.
+			Make sure to set this value according to your needs.
+			For example, if you expect to log large messages, you may want to increase this value.
+			Conversely, if you are concerned about memory usage, you may want to decrease this value.
+
+	config NET_LOGGING_BUFFER_SIZE
+		int "Buffer size"
+		default 1024
+		help
+			Set the buffer size for logging.
+			Note: This is the size of the buffer used for logging messages.
+			Make sure to set this value according to your needs.
+			For example, if you expect to log large messages, you may want to increase this value.
+			Conversely, if you are concerned about memory usage, you may want to decrease this value.
 
 endmenu

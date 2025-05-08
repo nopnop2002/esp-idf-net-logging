@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -22,9 +22,9 @@
 #include "esp_tls.h"
 #include "esp_http_client.h"
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTrans;
 #else
 extern MessageBufferHandle_t xMessageBufferTrans;
@@ -177,7 +177,7 @@ void http_client(void *pvParameters)
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
         size_t received;
         char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
         //printf("xRingBufferReceive received=%d\n", received);
@@ -193,7 +193,7 @@ void http_client(void *pvParameters)
 			if (received) {
 				http_post_with_url(param.url, buffer, received);
 			}
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
             vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
 #endif
 		} else {

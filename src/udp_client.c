@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -21,9 +21,9 @@
 #include "esp_log.h"
 #include "lwip/sockets.h"
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTrans;
 #else
 extern MessageBufferHandle_t xMessageBufferTrans;
@@ -65,7 +65,7 @@ void udp_client(void *pvParameters) {
 	xTaskNotifyGive(param.taskHandle);
 
 	while(1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		size_t received;
 		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
 		//printf("xRingBufferReceive received=%d\n", received);
@@ -79,7 +79,7 @@ void udp_client(void *pvParameters) {
 			//udp_dump("buffer", buffer, received);
 			ret = lwip_sendto(fd, buffer, received, 0, (struct sockaddr *)&addr, sizeof(addr));
 			LWIP_ASSERT("ret == received", ret == received);
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
 #endif
 		} else {

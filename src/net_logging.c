@@ -1,10 +1,12 @@
+#include "net_logging.h"
+
 #include <string.h>
 #include <assert.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -12,50 +14,57 @@
 
 #include "esp_system.h"
 #include "esp_log.h"
+#include "net_logging_priv.h"
 
-#include "net_logging.h"
-
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 RingbufHandle_t xRingBufferTrans;
 #else
 MessageBufferHandle_t xMessageBufferTrans;
 #endif
 bool writeToStdout;
 
-int logging_vprintf( const char *fmt, va_list l ) {
+static int logging_vprintf( const char *fmt, va_list l ) {
 	// Convert according to format
-	char buffer[xItemSize];
-	int buffer_len = vsprintf(buffer, fmt, l);
-	//printf("logging_vprintf buffer_len=%d\n",buffer_len);
-	//printf("logging_vprintf buffer=[%.*s]\n", buffer_len, buffer);
-	if (buffer_len > 0) {
+	char *buffer = malloc(xItemSize);
+    if (buffer == NULL) {
+        printf("logging_vprintf malloc fail\n");
+        return 0;
+    }
+	int str_len = vsnprintf(buffer, xItemSize, fmt, l);
+	//printf("logging_vprintf str_len=%d\n",str_len);
+	//printf("logging_vprintf buffer=[%.*s]\n", str_len, buffer);
+	if (str_len > 0) {
 		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		// Send RingBuffer
-		BaseType_t sended = xRingbufferSendFromISR(xRingBufferTrans, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+		BaseType_t sended = xRingbufferSendFromISR(xRingBufferTrans, &buffer, str_len, &xHigherPriorityTaskWoken);
 		//printf("logging_vprintf sended=%d\n",sended);
-		assert(sended == pdTRUE);
+		//assert(sended == pdTRUE); -- don't die if buffer overflows
 #else
 		// Send MessageBuffer
-		size_t sended = xMessageBufferSendFromISR(xMessageBufferTrans, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+		size_t sended = xMessageBufferSendFromISR(xMessageBufferTrans, &buffer, str_len, &xHigherPriorityTaskWoken);
 		//printf("logging_vprintf sended=%d\n",sended);
-		assert(sended == buffer_len);
+		// assert(sended == str_len); -- don't die if buffer overflows
 #endif
 	}
 
 	// Write to stdout
 	if (writeToStdout) {
-		return vprintf( fmt, l );
-	} else {
-		return 0;
-	}
+        //return vprintf( fmt, l );
+        //printf( "%s", buffer ); // we already formatted the string, so just print it
+        fwrite( buffer, sizeof(char), str_len, stdout );
+        //fflush(stdout); // make sure it gets printed immediately
+	} 
+
+    free(buffer);
+    return 0;
 }
 
 void udp_client(void *pvParameters);
 
 esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start udp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
 	// Create RineBuffer
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -88,7 +97,7 @@ void tcp_client(void *pvParameters);
 
 esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start tcp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
 	// Create RineBuffer
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -121,7 +130,7 @@ void sse_server(void *pvParameters);
 
 esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start HTTP Server Sent Events logging(xRingBuffer): SSE server listening on port=%ld\n", port);
 	// Create RineBuffer
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -153,7 +162,7 @@ void mqtt_pub(void *pvParameters);
 
 esp_err_t mqtt_logging_init(const char *url, char *topic, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start mqtt logging(xRingBuffer): url=[%s] topic=[%s]\n", url, topic);
 	// Create RineBuffer
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -186,7 +195,7 @@ void http_client(void *pvParameters);
 
 esp_err_t http_logging_init(const char *url, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start http logging(xRingBuffer): url=[%s]\n", url);
 	// Create RineBuffer
 	xRingBufferTrans = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);

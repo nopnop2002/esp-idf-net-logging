@@ -147,6 +147,7 @@ I used Ubuntu 22.04.
 
 ```
 $ cd /etc/rsyslog.d/
+
 $ sudo vi 99-remote.conf
 module(load="imudp")
 input(type="imudp" port="514")
@@ -155,12 +156,17 @@ if $fromhost-ip != '127.0.0.1' and $fromhost-ip != 'localhost' then {
     action(type="omfile" file="/var/log/remote")
     stop
 }
+
 $ sudo ufw enable
+
 $ sudo ufw allow 514/udp
+
 $ sudo systemctl restart rsyslog
+
 $ ss -nulp | grep 514
 UNCONN 0      0            0.0.0.0:514        0.0.0.0:*
 UNCONN 0      0               [::]:514           [::]:*
+
 $ sudo ufw status
 Status: active
 

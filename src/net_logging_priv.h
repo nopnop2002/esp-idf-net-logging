@@ -1,11 +1,12 @@
 #ifndef NET_LOGGING_PRIV_H_
 #define NET_LOGGING_PRIV_H_
 
+#include "net_logging.h"
 #include <stdint.h>
 #include <inttypes.h>
-#include "freertos/FreeRTOS.h" // for TaskHandle_t
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h" // for TaskHandle_t
 
-#include "net_logging.h"
 
 // The total number of bytes (not messages) the message buffer will be able to hold at any one time.
 #define xBufferSizeBytes (CONFIG_NET_LOGGING_BUFFER_SIZE) // set this in menuconfig

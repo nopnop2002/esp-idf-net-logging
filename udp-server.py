@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
 import select, socket
 import argparse
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--port', type=int, help='tcp port', default=6789)
+	parser.add_argument('--port', type=int, help='udp port', default=6789)
 	args = parser.parse_args()
 	print("args.port={}".format(args.port))
 

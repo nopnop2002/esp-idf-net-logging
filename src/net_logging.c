@@ -18,6 +18,7 @@
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 RingbufHandle_t xRingBufferUDP = NULL;
+RingbufHandle_t xRingBufferMulticast = NULL;
 RingbufHandle_t xRingBufferTCP = NULL;
 RingbufHandle_t xRingBufferMQTT = NULL;
 RingbufHandle_t xRingBufferHTTP = NULL;
@@ -25,6 +26,7 @@ RingbufHandle_t xRingBufferSSE = NULL;
 //RingbufHandle_t xRingBufferTrans;
 #else
 MessageBufferHandle_t xMessageBufferUDP = NULL;
+MessageBufferHandle_t xMessageBufferMulticast = NULL;
 MessageBufferHandle_t xMessageBufferTCP = NULL;
 MessageBufferHandle_t xMessageBufferMQTT = NULL;
 MessageBufferHandle_t xMessageBufferHTTP = NULL;
@@ -55,46 +57,54 @@ static int logging_vprintf( const char *fmt, va_list l ) {
 		// Send RingBuffer
 		BaseType_t sended;
 		if (xRingBufferUDP != NULL) {
-			sended = xRingbufferSendFromISR(xRingBufferUDP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == pdTRUE);
+			sended = xRingbufferSendFromISR(xRingBufferUDP, buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+			(void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
 		}
+        if (xRingBufferMulticast != NULL) {
+            sended = xRingbufferSendFromISR(xRingBufferMulticast, buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+            (void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
+        }
 		if (xRingBufferTCP != NULL) {
 			sended = xRingbufferSendFromISR(xRingBufferTCP, buffer, cstr_len, &xHigherPriorityTaskWoken);
-			assert(sended == pdTRUE);
+			(void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
 		}
 		if (xRingBufferMQTT != NULL) {
-			sended = xRingbufferSendFromISR(xRingBufferMQTT, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == pdTRUE);
+			sended = xRingbufferSendFromISR(xRingBufferMQTT, buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+			(void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
 		}
 		if (xRingBufferHTTP != NULL) {
-			sended = xRingbufferSendFromISR(xRingBufferHTTP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == pdTRUE);
+			sended = xRingbufferSendFromISR(xRingBufferHTTP, buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+			(void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
 		}
 		if (xRingBufferSSE != NULL) {
-			sended = xRingbufferSendFromISR(xRingBufferSSE, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			//assert(sended == pdTRUE); -- don't die if buffer overflows
+			sended = xRingbufferSendFromISR(xRingBufferSSE, buffer, strlen(buffer), &xHigherPriorityTaskWoken);
+			(void)sended; //assert(sended == pdTRUE); -- don't die if buffer overflows
 		}
 #else
 		// Send MessageBuffer
 		size_t sended;
 		if (xMessageBufferUDP != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferUDP, &buffer, buffer_len, &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			sended = xMessageBufferSendFromISR(xMessageBufferUDP, buffer, buffer_len, &xHigherPriorityTaskWoken);
+			// assert(sended == str_len); -- don't die if buffer overflows
 		}
+        if (xMessageBufferMulticast != NULL) {
+            sended = xMessageBufferSendFromISR(xMessageBufferMulticast, buffer, buffer_len, &xHigherPriorityTaskWoken);
+            // assert(sended == str_len); -- don't die if buffer overflows
+        }
 		if (xMessageBufferTCP != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferTCP, buffer, cstr_len, &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			// assert(sended == str_len); -- don't die if buffer overflows
 		}
 		if (xMessageBufferMQTT != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferMQTT, &buffer, buffer_len, &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			sended = xMessageBufferSendFromISR(xMessageBufferMQTT, buffer, buffer_len, &xHigherPriorityTaskWoken);
+			// assert(sended == str_len); -- don't die if buffer overflows
 		}
 		if (xMessageBufferHTTP != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferHTTP, &buffer, buffer_len, &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			sended = xMessageBufferSendFromISR(xMessageBufferHTTP, buffer, buffer_len, &xHigherPriorityTaskWoken);
+			// assert(sended == str_len); -- don't die if buffer overflows
 		}
 		if (xMessageBufferSSE != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferSSE, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferSSE, buffer, buffer_len, &xHigherPriorityTaskWoken);
 			// assert(sended == str_len); -- don't die if buffer overflows
 		}
 #endif
@@ -114,7 +124,7 @@ static int logging_vprintf( const char *fmt, va_list l ) {
 
 void udp_client(void *pvParameters);
 
-esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
+esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, bool enableStdout) {
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start udp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
@@ -147,7 +157,42 @@ esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enabl
 		vMessageBufferDelete(xMessageBufferUDP);
 		xMessageBufferUDP = NULL;
 #endif
-	}
+    }
+
+    // Set function used to output log entries.
+    writeToStdout = enableStdout;
+    esp_log_set_vprintf(logging_vprintf);
+    return ESP_OK;
+}
+
+void multicast_log_sender(void *pvParameters);
+
+esp_err_t multicast_log_sender_init(const char *ipaddr, unsigned long port, bool enableStdout) {
+
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
+	printf("start multicast logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
+	// Create RineBuffer
+	xRingBufferMulticast = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
+	configASSERT( xRingBufferMulticast );
+#else
+	printf("start multicast logging(xMessageBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
+	// Create MessageBuffer
+	xMessageBufferMulticast = xMessageBufferCreate(xBufferSizeBytes);
+	configASSERT( xMessageBufferMulticast );
+#endif
+	
+    // Allocate memory for the parameter structure
+    // udp_client() will free it when done
+	PARAMETER_t *param = malloc(sizeof(PARAMETER_t)); 
+    if (param == NULL) {
+        printf("%s: malloc fail\n", __func__);
+        return ESP_ERR_NO_MEM;
+    }
+	param->port = port;
+	strcpy(param->ipv4, ipaddr);
+	param->taskHandle = xTaskGetCurrentTaskHandle();
+    // Start Multicast Sender task
+	xTaskCreate(multicast_log_sender, "MCAST", 1024*6, (void *)param, 2, NULL);
 
 	// Set function used to output log entries.
 	writeToStdout = enableStdout;
@@ -157,7 +202,7 @@ esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enabl
 
 void tcp_client(void *pvParameters);
 
-esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
+esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, bool enableStdout) {
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start tcp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
@@ -200,7 +245,7 @@ esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, int16_t enabl
 
 void sse_server(void *pvParameters);
 
-esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
+esp_err_t sse_logging_init(unsigned long port, bool enableStdout) {
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start HTTP Server Sent Events logging(xRingBuffer): SSE server listening on port=%ld\n", port);
@@ -242,7 +287,7 @@ esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
 
 void mqtt_pub(void *pvParameters);
 
-esp_err_t mqtt_logging_init(const char *url, char *topic, int16_t enableStdout) {
+esp_err_t mqtt_logging_init(const char *url, char *topic, bool enableStdout) {
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start mqtt logging(xRingBuffer): url=[%s] topic=[%s]\n", url, topic);
@@ -285,7 +330,7 @@ esp_err_t mqtt_logging_init(const char *url, char *topic, int16_t enableStdout) 
 
 void http_client(void *pvParameters);
 
-esp_err_t http_logging_init(const char *url, int16_t enableStdout) {
+esp_err_t http_logging_init(const char *url, bool enableStdout) {
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start http logging(xRingBuffer): url=[%s]\n", url);

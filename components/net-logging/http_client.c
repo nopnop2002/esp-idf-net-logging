@@ -21,7 +21,6 @@
 #include "esp_system.h"
 #include "esp_tls.h"
 #include "esp_http_client.h"
-#include "netdb.h" //hostent
 
 #include "net_logging.h"
 

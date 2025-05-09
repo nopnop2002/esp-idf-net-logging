@@ -65,12 +65,13 @@ There are the following four methods for specifying the UDP Address.
 ## Configuration for TCP Redirect
 ESP32 works as a TCP client.   
 You can use the mDNS hostname (tcp-server.local) instead of the IP address.   
-Do not redirect if the TCP server is not found.   
+If esp32 can't connect to a TCP server, it won't redirect.   
 ![Image](https://github.com/user-attachments/assets/43774f6d-bfd3-4e6c-b367-d001284943de)
 
 
 ## Configuration for MQTT Redirect
 ESP32 works as a MQTT client.   
+If esp32 can't connect to a MQTT broker, it won't redirect.   
 ![Image](https://github.com/user-attachments/assets/101b8094-bb1e-4322-b793-51d930c53f48)
 
 

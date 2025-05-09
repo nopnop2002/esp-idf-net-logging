@@ -119,8 +119,16 @@ void mqtt_pub(void *pvParameters)
 	xEventGroupClearBits(mqtt_status_event_group, MQTT_CONNECTED_BIT);
 
 	// Wait for connection
-	xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, portMAX_DELAY);
-	printf("Connected to MQTT Broker\n");
+	//xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, portMAX_DELAY);
+	EventBits_t uxBits = xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, pdMS_TO_TICKS(1000));
+	printf("uxBits=0x%"PRIx32"\n", uxBits);
+	if( ( uxBits & MQTT_CONNECTED_BIT ) != 0 ) {
+		printf("Connected to MQTT Broker\n");
+	} else {
+		printf("Can't connected to MQTT Broker\n");
+		esp_mqtt_client_stop(mqtt_client);
+		vTaskDelete(NULL);
+	}
 
 	// Send ready to receive notify
 	xTaskNotifyGive(param.taskHandle);

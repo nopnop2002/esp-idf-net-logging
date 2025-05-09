@@ -1,0 +1,5 @@
+version: "0.2.0"
+description: Redirect esp-idf logging to the network.
+url: https://github.com/nopnop2002/esp-idf-net-logging
+dependencies:
+  idf: ">=4.3"

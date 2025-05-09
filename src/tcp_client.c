@@ -25,9 +25,9 @@
 #include "net_logging_priv.h"
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-extern RingbufHandle_t xRingBufferTrans;
+extern RingbufHandle_t xRingBufferTCP;
 #else
-extern MessageBufferHandle_t xMessageBufferTrans;
+extern MessageBufferHandle_t xMessageBufferTCP;
 #endif
 
 void tcp_client(void *pvParameters)
@@ -83,11 +83,11 @@ void tcp_client(void *pvParameters)
 	while (1) {
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
         size_t received;
-        char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+        char *buffer = (char *)xRingbufferReceive(xRingBufferTCP, &received, portMAX_DELAY);
         //printf("xRingBufferReceive received=%d\n", received);
 #else
 		char buffer[xItemSize];
-		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
+		size_t received = xMessageBufferReceive(xMessageBufferTCP, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
 #endif
 		if (received > 0) {
@@ -95,7 +95,7 @@ void tcp_client(void *pvParameters)
 			int ret = send(sock, buffer, received, 0);
 			LWIP_ASSERT("ret == received", ret == received);
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-            vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+            vRingbufferReturnItem(xRingBufferTCP, (void *)buffer);
 #endif
 		} else {
 			//printf("xMessageBufferReceive fail\n");

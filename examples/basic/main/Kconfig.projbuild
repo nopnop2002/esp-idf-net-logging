@@ -6,32 +6,11 @@ menu "Example Project Config"
 		help
 			Enable write Logging to STDOUT.
 
-	choice ENABLE_LOG
-		prompt "Protocol"
-		default ENABLE_UDP_LOG
+	config USE_RINGBUFFER
+		bool "Use xRingBuffer as IPC"
+		default n
 		help
-			Select Logging protocol.
-		config ENABLE_UDP_LOG
-			bool "UDP Logging"
-			help
-				Enable UDP Logging
-		config ENABLE_TCP_LOG
-			bool "TCP Logging"
-			help
-				Enable TCP Logging
-		config ENABLE_MQTT_LOG
-			bool "MQTT Logging"
-			help
-				Enable MQTT Logging
-		config ENABLE_HTTP_LOG
-			bool "HTTP Logging"
-			help
-				Enable HTTP Logging
-		config ENABLE_SSE_SERVER_LOG
-			bool "SSE Logging"
-			help
-				Enable SSE Logging Server
-	endchoice
+			Use xRingBuffer as IPC.
 
 	config ESP_WIFI_SSID
 		string "WiFi SSID"
@@ -51,33 +30,51 @@ menu "Example Project Config"
 		help
 			Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
 
+	config ENABLE_UDP_LOG
+		bool "Use UDP Logging"
+		default n
+		help
+			Use UDP Logging.
+
 	config LOG_UDP_SERVER_IP
 		depends on ENABLE_UDP_LOG
-		string "IP address to send log output"
+		string "[UDP] IP address to send log output"
 		default "255.255.255.255"
 		help
 			IP address to send log output to
 
 	config LOG_UDP_SERVER_PORT
 		depends on ENABLE_UDP_LOG
-		int "Port to send log output" 
+		int "[UDP] Port to send log output" 
 		default 6789
 		help
 			Port to send log output to
 
+	config ENABLE_TCP_LOG
+		bool "Use TCP Logging"
+		default n
+		help
+			Use TCP Logging.
+
 	config LOG_TCP_SERVER_IP
 		depends on ENABLE_TCP_LOG
-		string "IP address to send log output"
+		string "[TCP] IP address to send log output"
 		default "192.168.10.46"
 		help
 			IP address to send log output to
 
 	config LOG_TCP_SERVER_PORT
 		depends on ENABLE_TCP_LOG
-		int "Port to send log output" 
+		int "[TCP] Port to send log output" 
 		default 8080
 		help
 			Port to send log output to
+
+	config ENABLE_MQTT_LOG
+		bool "Use MQTT Logging"
+		default n
+		help
+			Use MQTT Logging.
 
 	config LOG_MQTT_SERVER_URL
 		depends on ENABLE_MQTT_LOG
@@ -93,12 +90,24 @@ menu "Example Project Config"
 		help
 			Topic of publish
 
+	config ENABLE_HTTP_LOG
+		bool "Use HTTP Logging"
+		default n
+		help
+			Use HTTP Logging.
+
 	config LOG_HTTP_SERVER_URL
 		depends on ENABLE_HTTP_LOG
 		string "URL of the http server to connect to"
 		default "http://myhttpserver.local:8000"
 		help
 			URL of the http server to connect to.
+
+	config ENABLE_SSE_SERVER_LOG
+		bool "Use SSE Logging"
+		default n
+		help
+			Use SSE Logging.
 
 	config LOG_SSE_LISTEN_PORT
 		depends on ENABLE_SSE_SERVER_LOG

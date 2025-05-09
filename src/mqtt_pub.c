@@ -1,5 +1,5 @@
 /*
-	MQTT over TCP
+	MQTT client
 
 	This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -34,9 +34,9 @@ EventGroupHandle_t mqtt_status_event_group;
 #define MQTT_CONNECTED_BIT BIT2
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-extern RingbufHandle_t xRingBufferTrans;
+extern RingbufHandle_t xRingBufferMQTT;
 #else
-extern MessageBufferHandle_t xMessageBufferTrans;
+extern MessageBufferHandle_t xMessageBufferMQTT;
 #endif
 
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
@@ -86,7 +86,7 @@ void mqtt_pub(void *pvParameters)
 	PARAMETER_t *task_parameter = pvParameters;
 	PARAMETER_t param;
 	memcpy((char *)&param, task_parameter, sizeof(PARAMETER_t));
-	//printf("Start:param.url=[%s] param.topic=[%s]\n", param.url, param.topic);
+	printf("Start:param.url=[%s] param.topic=[%s]\n", param.url, param.topic);
 
 	// Create Event Group
 	mqtt_status_event_group = xEventGroupCreate();
@@ -123,8 +123,16 @@ void mqtt_pub(void *pvParameters)
 	xEventGroupClearBits(mqtt_status_event_group, MQTT_CONNECTED_BIT);
 
 	// Wait for connection
-	xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, portMAX_DELAY);
-	//printf("Connected to MQTT Broker\n");
+	//xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, portMAX_DELAY);
+	EventBits_t uxBits = xEventGroupWaitBits(mqtt_status_event_group, MQTT_CONNECTED_BIT, false, true, pdMS_TO_TICKS(1000));
+	printf("uxBits=0x%"PRIx32"\n", uxBits);
+	if( ( uxBits & MQTT_CONNECTED_BIT ) != 0 ) {
+		printf("Connected to MQTT Broker\n");
+	} else {
+		printf("Can't connected to MQTT Broker\n");
+		esp_mqtt_client_stop(mqtt_client);
+		vTaskDelete(NULL);
+	}
 
 	// Send ready to receive notify
 	xTaskNotifyGive(param.taskHandle);
@@ -132,11 +140,11 @@ void mqtt_pub(void *pvParameters)
 	while (1) {
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		size_t received;
-		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+		char *buffer = (char *)xRingbufferReceive(xRingBufferMQTT, &received, portMAX_DELAY);
 		//printf("xRingBufferReceive received=%d\n", received);
 #else
 		char buffer[xItemSize];
-		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
+		size_t received = xMessageBufferReceive(xMessageBufferMQTT, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
 #endif
 		if (received > 0) {
@@ -154,7 +162,7 @@ void mqtt_pub(void *pvParameters)
 				printf("Connection to MQTT broker is broken. Skip to send\n");
 			}
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+			vRingbufferReturnItem(xRingBufferMQTT, (void *)buffer);
 #endif
 		} else {
 			printf("xMessageBufferReceive fail\n");

@@ -2,6 +2,7 @@
 #define NET_LOGGING_PRIV_H_
 
 #include <stdint.h>
+#include <inttypes.h>
 #include "freertos/FreeRTOS.h" // for TaskHandle_t
 
 #include "net_logging.h"

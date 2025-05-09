@@ -25,9 +25,9 @@
 #include "net_logging_priv.h"
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-extern RingbufHandle_t xRingBufferTrans;
+extern RingbufHandle_t xRingBufferHTTP;
 #else
-extern MessageBufferHandle_t xMessageBufferTrans;
+extern MessageBufferHandle_t xMessageBufferHTTP;
 #endif
 
 esp_err_t _http_event_handler(esp_http_client_event_t *evt)
@@ -110,7 +110,7 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 
 #define MAX_HTTP_OUTPUT_BUFFER 128
 
-static void http_post_with_url(char *url, char * post_data, size_t post_len)
+static esp_err_t http_post_with_url(char *url, char * post_data, size_t post_len)
 {
 	//ESP_LOGI(TAG, "http_post_with_url url=[%s]", url);
 	char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
@@ -122,22 +122,20 @@ static void http_post_with_url(char *url, char * post_data, size_t post_len)
 	 * If URL as well as host and path parameters are specified, values of host and path will be considered.
 	 */
 
-#if 1
 	esp_http_client_config_t config = {
 		.url = url,
 		.path = "/post",
 		.event_handler = _http_event_handler,
-		.user_data = local_response_buffer,			 // Pass address of local buffer to get response
+		.user_data = local_response_buffer, // Pass address of local buffer to get response
 		.disable_auto_redirect = true,
 	};
-#endif
 
 #if 0
 	esp_http_client_config_t config = {
 		.url = "http://192.168.10.46:8000",
 		.path = "/post",
 		.event_handler = _http_event_handler,
-		.user_data = local_response_buffer,			 // Pass address of local buffer to get response
+		.user_data = local_response_buffer, // Pass address of local buffer to get response
 		.disable_auto_redirect = true,
 	};
 #endif
@@ -151,6 +149,7 @@ static void http_post_with_url(char *url, char * post_data, size_t post_len)
 	//esp_http_client_set_post_field(client, post_data, strlen(post_data));
 	esp_http_client_set_post_field(client, post_data, post_len);
 	esp_err_t err = esp_http_client_perform(client);
+	//printf("esp_http_client_perform post_len=%d err=%d\n", post_len, err);
 	if (err == ESP_OK) {
 #if 0
 		ESP_LOGI(TAG, "HTTP POST Status = %d, content_length = %d",
@@ -159,10 +158,11 @@ static void http_post_with_url(char *url, char * post_data, size_t post_len)
 		ESP_LOGI(TAG, "local_response_buffer=[%s]", local_response_buffer);
 #endif
 	} else {
-		printf("HTTP POST request failed: %s", esp_err_to_name(err));
+		printf("HTTP POST request failed: %s\n", esp_err_to_name(err));
 	}
 
 	esp_http_client_cleanup(client);
+	return err;
 }
 
 
@@ -171,19 +171,24 @@ void http_client(void *pvParameters)
 	PARAMETER_t *task_parameter = pvParameters;
 	PARAMETER_t param;
 	memcpy((char *)&param, task_parameter, sizeof(PARAMETER_t));
-	//printf("Start:param.url=[%s]\n", param.url);
+	printf("Start:param.url=[%s]\n", param.url);
 
+	// Try to connect to http server
+	esp_err_t err = http_post_with_url(param.url, "", 0);
+	printf("http_post_with_url err=%d\n", err);
+	if (err != ESP_OK) vTaskDelete(NULL);
+	
 	// Send ready to receive notify
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-        size_t received;
-        char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
-        //printf("xRingBufferReceive received=%d\n", received);
+		size_t received;
+		char *buffer = (char *)xRingbufferReceive(xRingBufferHTTP, &received, portMAX_DELAY);
+		//printf("xRingBufferReceive received=%d\n", received);
 #else
 		char buffer[xItemSize];
-		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
+		size_t received = xMessageBufferReceive(xMessageBufferHTTP, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
 #endif
 		if (received > 0) {
@@ -194,7 +199,7 @@ void http_client(void *pvParameters)
 				http_post_with_url(param.url, buffer, received);
 			}
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-            vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+			vRingbufferReturnItem(xRingBufferHTTP, (void *)buffer);
 #endif
 		} else {
 			printf("xMessageBufferReceive fail\n");

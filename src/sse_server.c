@@ -38,9 +38,9 @@ extern const unsigned char sse_html_end[] asm("_binary_sse_html_end");
 #define STOPPED_SERVING_CLIENT	( 1 << 1 )
 
 #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-extern RingbufHandle_t xRingBufferTrans;
+extern RingbufHandle_t xRingBufferSSE;
 #else
-extern MessageBufferHandle_t xMessageBufferTrans;
+extern MessageBufferHandle_t xMessageBufferSSE;
 #endif
 
 void serve_client(void *pvParameters) {
@@ -102,10 +102,10 @@ void serve_client(void *pvParameters) {
     while ((xEventGroupGetBits(client_serving_task_events) & STOP_SERVING_CLIENT) == 0) {
       #if CONFIG_NET_LOGGING_USE_RINGBUFFER
       size_t received;
-      char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, pdMS_TO_TICKS(10));
+      char *buffer = (char *)xRingbufferReceive(xRingBufferSSE, &received, pdMS_TO_TICKS(10));
       #else
       char buffer[xItemSize];
-      size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), pdMS_TO_TICKS(10));
+      size_t received = xMessageBufferReceive(xMessageBufferSSE, buffer, sizeof(buffer), pdMS_TO_TICKS(10));
       #endif
 
       if (received > 0) {
@@ -114,7 +114,7 @@ void serve_client(void *pvParameters) {
         snprintf(sse_event, sizeof(sse_event), "event: log-line\ndata: %.*s\n\n", (int)received, buffer);
 
         #if CONFIG_NET_LOGGING_USE_RINGBUFFER
-        vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+        vRingbufferReturnItem(xRingBufferSSE, (void *)buffer);
         #endif
 
         // Send the event

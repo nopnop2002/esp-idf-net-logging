@@ -78,7 +78,7 @@ ESP32 works as a MQTT client.
 ## Configuration for HTTP Redirect
 ESP32 works as a HTTP client.   
 You can use mDNS host name for your http server.
-Image](https://github.com/user-attachments/assets/02214da9-0fd8-4ff4-8da9-1343006ca530)
+![Image](https://github.com/user-attachments/assets/02214da9-0fd8-4ff4-8da9-1343006ca530)
 
 
 ## Configuration for SSE Redirect

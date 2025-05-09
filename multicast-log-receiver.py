@@ -1,19 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Multicast client
-# Adapted from: http://chaos.weblogs.us/archives/164
+# Multicast Log Reciever
+# This program receives UDP multicast packets and logs them to a file.
+# Author: Paul Abbott
 
 import socket
 import platform
 import struct
 import argparse
+import re
+import logging
+import logging.handlers
 
 ANY = "0.0.0.0" 
 
 DEF_ADDR = "239.2.1.2"
 DEF_PORT = 2054
 DEF_IFACE = ANY
+
+def escape_ansi(line):
+    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+    return ansi_escape.sub('', line)
+
+def log_setup():
+    log_handler = logging.handlers.RotatingFileHandler('my.log', maxBytes=1000000, backupCount=99)
+    formatter = logging.Formatter('%(asctime)s %(message)s')
+    log_handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.DEBUG)
+    log_handler.doRollover()
+    logger.info("Logging started")
 
 def run_multicast(port, addr, iface):
 
@@ -51,9 +69,9 @@ def run_multicast(port, addr, iface):
 	# But this will raise an error if recv() or send() can't immediately find or send data. 
 	sock.setblocking(False)
 
-	print("+================================+")
-	print("| ESP32 Multicast Logging Server |")
-	print("+================================+")
+	print("+============================+")
+	print("| Multicast Logging Receiver |")
+	print("+============================+")
 	print("")
 
 	while 1:
@@ -65,10 +83,11 @@ def run_multicast(port, addr, iface):
 			print("From:", addr, end=' ')
 			if (type(data) is bytes):
 				data = data.decode('utf-8')
-			if not data.endswith('\n'):
-				data += '\n'
-			print(data, end='')
-
+			data = data.rstrip() # remove trailing \r\n
+			print(data)
+			data = escape_ansi(data) # remove ANSI color codes for the txt file
+			logging.info(data)
+			
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
@@ -79,4 +98,5 @@ if __name__ == "__main__":
 	print("args.port={}".format(args.port))
 	print("args.iface={}".format(args.iface))
 	print("args.addr={}".format(args.addr))
+	log_setup()
 	run_multicast(args.port, args.addr, args.iface)

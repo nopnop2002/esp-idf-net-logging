@@ -78,6 +78,7 @@ If esp32 can't connect to a MQTT broker, it won't redirect.
 ## Configuration for HTTP Redirect
 ESP32 works as a HTTP client.   
 You can use an mDNS hostname instead of an IP address.   
+If esp32 can't connect to a HTTP server, it won't redirect.   
 ![Image](https://github.com/user-attachments/assets/02214da9-0fd8-4ff4-8da9-1343006ca530)
 
 

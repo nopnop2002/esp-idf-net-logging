@@ -1,4 +1,4 @@
-menu "NET Logging"
+menu "Example Project Config"
 
 	config WRITE_TO_STDOUT
 		bool "Enable write Logging to STDOUT"
@@ -115,4 +115,5 @@ menu "NET Logging"
 		default 8080
 		help
 			Port to bind the SSE server on
+
 endmenu

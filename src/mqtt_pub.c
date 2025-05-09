@@ -14,22 +14,26 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
 #endif
 #include "esp_log.h"
 #include "esp_event.h"
-#include "esp_mac.h" // esp_base_mac_addr_get
+
+#if ESP_IDF_VERSION > ESP_IDF_VERSION_VAL(4, 4, 0)
+	#include "esp_mac.h" // esp_base_mac_addr_get
+#endif
+
 #include "mqtt_client.h"
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
 EventGroupHandle_t mqtt_status_event_group;
 #define MQTT_CONNECTED_BIT BIT2
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferMQTT;
 #else
 extern MessageBufferHandle_t xMessageBufferMQTT;
@@ -134,7 +138,7 @@ void mqtt_pub(void *pvParameters)
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		size_t received;
 		char *buffer = (char *)xRingbufferReceive(xRingBufferMQTT, &received, portMAX_DELAY);
 		//printf("xRingBufferReceive received=%d\n", received);
@@ -157,7 +161,7 @@ void mqtt_pub(void *pvParameters)
 			} else {
 				printf("Connection to MQTT broker is broken. Skip to send\n");
 			}
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 			vRingbufferReturnItem(xRingBufferMQTT, (void *)buffer);
 #endif
 		} else {

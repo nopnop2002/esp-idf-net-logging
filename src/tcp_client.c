@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -22,9 +22,9 @@
 #include "lwip/sockets.h"
 #include "netdb.h" // gethostbyname
 
-#include "net_logging.h"
+#include "net_logging_priv.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferTCP;
 #else
 extern MessageBufferHandle_t xMessageBufferTCP;
@@ -69,7 +69,7 @@ void tcp_client(void *pvParameters)
 	}
 	printf("Socket created, connecting to %s:%d\n", param.ipv4, param.port);
 
-	int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr_in6));
+	int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr_in));
 	if (err == 0) {
 		printf("Successfully connected\n");
 	} else {
@@ -81,7 +81,7 @@ void tcp_client(void *pvParameters)
 	xTaskNotifyGive(param.taskHandle);
 
 	while (1) {
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
         size_t received;
         char *buffer = (char *)xRingbufferReceive(xRingBufferTCP, &received, portMAX_DELAY);
         //printf("xRingBufferReceive received=%d\n", received);
@@ -94,7 +94,7 @@ void tcp_client(void *pvParameters)
 			//printf("xMessageBufferReceive buffer=[%.*s]\n",received, buffer);
 			int ret = send(sock, buffer, received, 0);
 			LWIP_ASSERT("ret == received", ret == received);
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
             vRingbufferReturnItem(xRingBufferTCP, (void *)buffer);
 #endif
 		} else {

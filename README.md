@@ -41,7 +41,7 @@ idf.py flash
 
 ## Configuration for UDP Redirect
 ESP32 works as a UDP client.   
-![config-udp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/5a9914ff-53a7-44f9-9ebf-08641c5123da)
+![Image](https://github.com/user-attachments/assets/9f8b40d7-58ea-4a23-a22b-94a9f3883140)
 
 There are the following four methods for specifying the UDP Address.
 - Limited broadcast address   
@@ -64,32 +64,33 @@ There are the following four methods for specifying the UDP Address.
 
 ## Configuration for TCP Redirect
 ESP32 works as a TCP client.   
-![config-tcp](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/1f3a2609-2cce-498b-96fd-e5cf598552af)
+![Image](https://github.com/user-attachments/assets/43774f6d-bfd3-4e6c-b367-d001284943de)
 
 You can use the mDNS hostname of such a TCP server instead of the IP address.   
 tcp-server.local   
 
 
 ## Configuration for MQTT Redirect
-![config-mqtt](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/d27be5d2-6a1a-4c5f-86c9-6cdf4394d137)
+ESP32 works as a MQTT client.   
+![Image](https://github.com/user-attachments/assets/101b8094-bb1e-4322-b793-51d930c53f48)
 
 
 ## Configuration for HTTP Redirect
 ESP32 works as a HTTP client.   
 You can use mDNS host name for your http server.
-![config-http](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/ea09b7e6-a95a-4351-8fb8-d6d9a9c398cb)
+Image](https://github.com/user-attachments/assets/02214da9-0fd8-4ff4-8da9-1343006ca530)
 
 
 ## Configuration for SSE Redirect
 ESP32 works as a SSE server.   
-![Image](https://github.com/user-attachments/assets/463f3d4f-e38c-4698-8d4a-070116d65604)
+![Image](https://github.com/user-attachments/assets/226c05a2-2629-450b-9522-8655b9bb6ac6)
 
 
 ## Disable Logging to STDOUT
-![config-stdout](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/c8516a79-4c55-414f-b0b6-41eff0006e72)
+![Image](https://github.com/user-attachments/assets/5f982b89-18eb-483b-acbb-31718b3aa6a5)
 
 ## Use xRingBuffer as IPC
-![config-xRingBuffer](https://github.com/nopnop2002/esp-idf-net-logging/assets/6020549/53aef0cc-0e44-4f19-a10c-d55bc78ef091)
+![Image](https://github.com/user-attachments/assets/2a602782-e590-4cea-99fb-ca88cf0aab5a)
 
 Both xMessageBuffer and xRingBuffer are interprocess communication (IPC) components provided by ESP-IDF.   
 Several drivers provided by ESP-IDF use xRingBuffer.   
@@ -231,6 +232,14 @@ esp_err_t mqtt_logging_init(char *url, char *topic, int16_t enableStdout);
 esp_err_t http_logging_init(char *url, int16_t enableStdout);
 esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout);
 ```
+
+It is possible to use multiple protocols simultaneously.   
+The following example uses UDP and SSE together.   
+```
+udp_logging_init("255.255.255.255", 6789, true);
+sse_logging_init(8080, true);
+```
+
 
 # How to use this component in your project   
 Create idf_component.yml in the same directory as main.c.   

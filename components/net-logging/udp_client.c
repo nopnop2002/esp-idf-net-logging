@@ -24,9 +24,9 @@
 #include "net_logging.h"
 
 #if CONFIG_USE_RINGBUFFER
-extern RingbufHandle_t xRingBufferTrans;
+extern RingbufHandle_t xRingBufferUDP;
 #else
-extern MessageBufferHandle_t xMessageBufferTrans;
+extern MessageBufferHandle_t xMessageBufferUDP;
 #endif
 
 void udp_dump(char *id, char *data, int len)
@@ -67,11 +67,11 @@ void udp_client(void *pvParameters) {
 	while(1) {
 #if CONFIG_USE_RINGBUFFER
 		size_t received;
-		char *buffer = (char *)xRingbufferReceive(xRingBufferTrans, &received, portMAX_DELAY);
+		char *buffer = (char *)xRingbufferReceive(xRingBufferUDP, &received, portMAX_DELAY);
 		//printf("xRingBufferReceive received=%d\n", received);
 #else
 		char buffer[xItemSize];
-		size_t received = xMessageBufferReceive(xMessageBufferTrans, buffer, sizeof(buffer), portMAX_DELAY);
+		size_t received = xMessageBufferReceive(xMessageBufferUDP, buffer, sizeof(buffer), portMAX_DELAY);
 		//printf("xMessageBufferReceive received=%d\n", received);
 #endif
 		if (received > 0) {
@@ -80,7 +80,7 @@ void udp_client(void *pvParameters) {
 			ret = lwip_sendto(fd, buffer, received, 0, (struct sockaddr *)&addr, sizeof(addr));
 			LWIP_ASSERT("ret == received", ret == received);
 #if CONFIG_USE_RINGBUFFER
-			vRingbufferReturnItem(xRingBufferTrans, (void *)buffer);
+			vRingbufferReturnItem(xRingBufferUDP, (void *)buffer);
 #endif
 		} else {
 			printf("xMessageBufferReceive fail\n");

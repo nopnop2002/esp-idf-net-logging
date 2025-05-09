@@ -160,8 +160,15 @@ if $fromhost-ip != '127.0.0.1' and $fromhost-ip != 'localhost' then {
 }
 
 $ sudo ufw enable
+Firewall is active and enabled on system startup
 
 $ sudo ufw allow 514/udp
+Rule added
+Rule added (v6)
+
+$ sudo ufw allow 22/tcp
+Rule added
+Rule added (v6)
 
 $ sudo systemctl restart rsyslog
 
@@ -175,7 +182,9 @@ Status: active
 To                         Action      From
 --                         ------      ----
 514/udp                    ALLOW       Anywhere
+22/tcp                     ALLOW       Anywhere
 514/udp (v6)               ALLOW       Anywhere (v6)
+22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
 
 Logging from esp-idf goes to /var/log/remote.   

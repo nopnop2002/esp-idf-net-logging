@@ -35,7 +35,23 @@ bool writeToStdout;
 int logging_vprintf( const char *fmt, va_list l ) {
 	// Convert according to format
 	char buffer[xItemSize];
-	int buffer_len = vsprintf(buffer, fmt, l);
+	//int buffer_len = vsprintf(buffer, fmt, l);
+	int buffer_len = vsnprintf(buffer, xItemSize, fmt, l);
+
+#if 0
+	xItemSize > buffer_len
+	I (307) MAIN: xItemSize=20 buffer_len=11 strlen(buffer)=11
+	I (307) MAIN: buffer=[76 61 6c 75 65 3a 20 31 30 30 0a]
+
+	xItemSize = buffer_len
+	I (307) MAIN: xItemSize=11 buffer_len=11 strlen(buffer)=10
+	I (307) MAIN: buffer=[76 61 6c 75 65 3a 20 31 30 30 00]
+
+	xItemSize < buffer_len
+	I (307) MAIN: xItemSize=10 buffer_len=11 strlen(buffer)=9
+	I (307) MAIN: buffer=[76 61 6c 75 65 3a 20 31 30 00 00]
+#endif
+
 	//printf("logging_vprintf buffer_len=%d\n",buffer_len);
 	//printf("logging_vprintf buffer=[%.*s]\n", buffer_len, buffer);
 	if (buffer_len > 0) {
@@ -67,23 +83,23 @@ int logging_vprintf( const char *fmt, va_list l ) {
 		// Send MessageBuffer
 		size_t sended;
 		if (xMessageBufferUDP != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferUDP, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferUDP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
 			assert(sended == buffer_len);
 		}
 		if (xMessageBufferTCP != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferTCP, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferTCP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
 			assert(sended == buffer_len);
 		}
 		if (xMessageBufferMQTT != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferMQTT, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferMQTT, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
 			assert(sended == buffer_len);
 		}
 		if (xMessageBufferHTTP != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferHTTP, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferHTTP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
 			assert(sended == buffer_len);
 		}
 		if (xMessageBufferSSE != NULL) {
-			sended = xMessageBufferSendFromISR(xMessageBufferSSE, &buffer, buffer_len, &xHigherPriorityTaskWoken);
+			sended = xMessageBufferSendFromISR(xMessageBufferSSE, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
 			assert(sended == buffer_len);
 		}
 #endif

@@ -84,23 +84,23 @@ int logging_vprintf( const char *fmt, va_list l ) {
 		size_t sended;
 		if (xMessageBufferUDP != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferUDP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			assert(sended == strlen(buffer));
 		}
 		if (xMessageBufferTCP != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferTCP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			assert(sended == strlen(buffer));
 		}
 		if (xMessageBufferMQTT != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferMQTT, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			assert(sended == strlen(buffer));
 		}
 		if (xMessageBufferHTTP != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferHTTP, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			assert(sended == strlen(buffer));
 		}
 		if (xMessageBufferSSE != NULL) {
 			sended = xMessageBufferSendFromISR(xMessageBufferSSE, &buffer, strlen(buffer), &xHigherPriorityTaskWoken);
-			assert(sended == buffer_len);
+			assert(sended == strlen(buffer));
 		}
 #endif
 	}

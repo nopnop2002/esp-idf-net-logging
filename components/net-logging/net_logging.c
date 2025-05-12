@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -15,7 +15,7 @@
 
 #include "net_logging.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 RingbufHandle_t xRingBufferUDP = NULL;
 RingbufHandle_t xRingBufferTCP = NULL;
 RingbufHandle_t xRingBufferMQTT = NULL;
@@ -56,7 +56,7 @@ int logging_vprintf( const char *fmt, va_list l ) {
 	//printf("logging_vprintf buffer=[%.*s]\n", buffer_len, buffer);
 	if (buffer_len > 0) {
 		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		// Send RingBuffer
 		BaseType_t sended;
 		if (xRingBufferUDP != NULL) {
@@ -117,7 +117,7 @@ void udp_client(void *pvParameters);
 
 esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start udp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
 	// Create RineBuffer
 	xRingBufferUDP = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -141,7 +141,7 @@ esp_err_t udp_logging_init(const char *ipaddr, unsigned long port, int16_t enabl
 	printf("udp ulTaskNotifyTake=%"PRIi32"\n", value);
 	if (value == 0) {
 		printf("stop udp logging\n");
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		vRingbufferDelete(xRingBufferUDP);
 		xRingBufferUDP = NULL;
 #else
@@ -160,7 +160,7 @@ void tcp_client(void *pvParameters);
 
 esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start tcp logging(xRingBuffer): ipaddr=[%s] port=%ld\n", ipaddr, port);
 	// Create RineBuffer
 	xRingBufferTCP = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -184,7 +184,7 @@ esp_err_t tcp_logging_init(const char *ipaddr, unsigned long port, int16_t enabl
 	printf("tcp ulTaskNotifyTake=%"PRIi32"\n", value);
 	if (value == 0) {
 		printf("stop tcp logging\n");
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		vRingbufferDelete(xRingBufferTCP);
 		xRingBufferTCP = NULL;
 #else
@@ -203,7 +203,7 @@ void sse_server(void *pvParameters);
 
 esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start HTTP Server Sent Events logging(xRingBuffer): SSE server listening on port=%ld\n", port);
 	// Create RineBuffer
 	xRingBufferSSE = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -226,7 +226,7 @@ esp_err_t sse_logging_init(unsigned long port, int16_t enableStdout) {
 	printf("sse ulTaskNotifyTake=%"PRIi32"\n", value);
 	if (value == 0) {
 		printf("stop HTTP SSE logging\n");
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		vRingbufferDelete(xRingBufferSSE);
 		xRingBufferSSE = NULL;
 #else
@@ -245,7 +245,7 @@ void mqtt_pub(void *pvParameters);
 
 esp_err_t mqtt_logging_init(const char *url, char *topic, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start mqtt logging(xRingBuffer): url=[%s] topic=[%s]\n", url, topic);
 	// Create RineBuffer
 	xRingBufferMQTT = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -269,7 +269,7 @@ esp_err_t mqtt_logging_init(const char *url, char *topic, int16_t enableStdout) 
 	printf("mqtt ulTaskNotifyTake=%"PRIi32"\n", value);
 	if (value == 0) {
 		printf("stop mqtt logging\n");
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		vRingbufferDelete(xRingBufferMQTT);
 		xRingBufferMQTT = NULL;
 #else
@@ -288,7 +288,7 @@ void http_client(void *pvParameters);
 
 esp_err_t http_logging_init(const char *url, int16_t enableStdout) {
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 	printf("start http logging(xRingBuffer): url=[%s]\n", url);
 	// Create RineBuffer
 	xRingBufferHTTP = xRingbufferCreate(xBufferSizeBytes, RINGBUF_TYPE_NOSPLIT);
@@ -311,7 +311,7 @@ esp_err_t http_logging_init(const char *url, int16_t enableStdout) {
 	printf("http ulTaskNotifyTake=%"PRIi32"\n", value);
 	if (value == 0) {
 		printf("stop http logging\n");
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 		vRingbufferDelete(xRingBufferHTTP);
 		xRingBufferHTTP = NULL;
 #else

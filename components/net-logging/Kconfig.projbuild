@@ -6,7 +6,7 @@ menu "NET Logging"
 		help
 			Enable write Logging to STDOUT.
 
-	config USE_RINGBUFFER
+	config NET_LOGGING_USE_RINGBUFFER
 		bool "Use xRingBuffer as IPC"
 		default n
 		help

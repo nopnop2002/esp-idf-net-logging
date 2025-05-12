@@ -18,7 +18,7 @@
 #include "freertos/task.h" // for vTaskDelete()
 #include "freertos/event_groups.h"
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 #include "freertos/ringbuf.h"
 #else
 #include "freertos/message_buffer.h"
@@ -37,7 +37,7 @@ extern const unsigned char sse_html_end[] asm("_binary_sse_html_end");
 #define STOP_SERVING_CLIENT	( 1 << 0 )
 #define STOPPED_SERVING_CLIENT	( 1 << 1 )
 
-#if CONFIG_USE_RINGBUFFER
+#if CONFIG_NET_LOGGING_USE_RINGBUFFER
 extern RingbufHandle_t xRingBufferSSE;
 #else
 extern MessageBufferHandle_t xMessageBufferSSE;
@@ -100,7 +100,7 @@ void serve_client(void *pvParameters) {
 
     // Keep connection open and send SSE events
     while ((xEventGroupGetBits(client_serving_task_events) & STOP_SERVING_CLIENT) == 0) {
-      #if CONFIG_USE_RINGBUFFER
+      #if CONFIG_NET_LOGGING_USE_RINGBUFFER
       size_t received;
       char *buffer = (char *)xRingbufferReceive(xRingBufferSSE, &received, pdMS_TO_TICKS(10));
       #else
@@ -113,7 +113,7 @@ void serve_client(void *pvParameters) {
         char sse_event[512];
         snprintf(sse_event, sizeof(sse_event), "event: log-line\ndata: %.*s\n\n", (int)received, buffer);
 
-        #if CONFIG_USE_RINGBUFFER
+        #if CONFIG_NET_LOGGING_USE_RINGBUFFER
         vRingbufferReturnItem(xRingBufferSSE, (void *)buffer);
         #endif
 

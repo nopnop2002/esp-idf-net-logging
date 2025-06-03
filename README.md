@@ -142,11 +142,6 @@ You can view the logging using python code or various tools.
 
 # Using linux rsyslogd as logger   
 We can forward logging to rsyslogd on Linux machine.   
-One advantage of using rsyslogd is that you can take advantage of log file rotation.   
-Rotating log files prevents the log files from growing forever.   
-The easiest way to rotate logs is to add var/log/remote to /etc/logrotate.d/rsyslog.   
-There are many resources available on the Internet about rotating log files.   
-
 Configure with protocol = UDP and port number = 514.   
 ![Image](https://github.com/user-attachments/assets/7d7c6cc2-2f58-40ec-8a3d-afbc80305403)
 
@@ -196,6 +191,11 @@ To                         Action      From
 ```
 
 Logging from esp-idf goes to /var/log/remote.   
+One advantage of using rsyslogd is that you can take advantage of log file rotation.   
+Rotating log files prevents the log files from growing forever.   
+The easiest way to rotate logs is to add var/log/remote to /etc/logrotate.d/rsyslog.   
+There are many resources available on the Internet about rotating log files.   
+
 ```
 $ tail -f /var/log/remote
 May  8 14:06:09 I (6688) MAIN: This is info level

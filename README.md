@@ -213,6 +213,9 @@ May  8 14:06:10 192.168.10.130  <ba-add>idx:1 (ifx:0, f8:b7:97:36:de:52), tid:0,
 May  8 14:06:10 192.168.10.130
 ```
 
+var/log/remote can be rotated automatically.   
+The easiest way is to add var/log/remote to /etc/logrotate.d/rsyslog.   
+
 # Disable ANSI Color control
 You can disable this if you are unable to display ANSI color codes correctly.   
 ![ANSI-Color](https://github.com/user-attachments/assets/c36b5f74-e85a-48c0-b498-5cb5301f0d24)   

@@ -213,8 +213,11 @@ May  8 14:06:10 192.168.10.130  <ba-add>idx:1 (ifx:0, f8:b7:97:36:de:52), tid:0,
 May  8 14:06:10 192.168.10.130
 ```
 
-var/log/remote can be rotated automatically.   
-The easiest way is to add var/log/remote to /etc/logrotate.d/rsyslog.   
+One advantage of using rsyslogd is that you can take advantage of log file rotation.   
+Rotating log files prevents the log files from growing forever.   
+The easiest way to rotate logs is to add var/log/remote to /etc/logrotate.d/rsyslog.   
+There are many resources available on the Internet about rotating log files.   
+
 
 # Disable ANSI Color control
 You can disable this if you are unable to display ANSI color codes correctly.   

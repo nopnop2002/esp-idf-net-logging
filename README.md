@@ -191,11 +191,6 @@ To                         Action      From
 ```
 
 Logging from esp-idf goes to /var/log/remote.   
-One advantage of using rsyslogd is that you can take advantage of log file rotation.   
-Rotating log files prevents the log files from growing forever.   
-The easiest way to rotate logs is to add /var/log/remote to /etc/logrotate.d/rsyslog.   
-There are many resources available on the Internet about rotating log files.   
-
 ```
 $ tail -f /var/log/remote
 May  8 14:06:09 I (6688) MAIN: This is info level
@@ -216,6 +211,16 @@ May  8 14:06:09 192.168.10.130
 May  8 14:06:10 I (7498) wifi:
 May  8 14:06:10 192.168.10.130  <ba-add>idx:1 (ifx:0, f8:b7:97:36:de:52), tid:0, ssn:4, winSize:64
 May  8 14:06:10 192.168.10.130
+```
+
+One advantage of using rsyslogd is that you can take advantage of log file rotation.   
+Rotating log files prevents the log files from growing forever.   
+The easiest way to rotate logs is to add /var/log/remote to /etc/logrotate.d/rsyslog.   
+There are many resources available on the Internet about rotating log files.   
+```
+$ ls -l /var/log/remote*
+-rw-r--r-- 1 syslog syslog    6264 Jun  6 10:35 /var/log/remote
+-rw-r--r-- 1 syslog syslog 1219823 Jun  6 10:33 /var/log/remote.1
 ```
 
 # Disable ANSI Color control
